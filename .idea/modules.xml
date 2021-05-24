@@ -3,9 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AD-SoSe21.iml" filepath="$PROJECT_DIR$/.idea/AD-SoSe21.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Fibonacci/Fibonacci.iml" filepath="$PROJECT_DIR$/Fibonacci/Fibonacci.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lab01/Lab01.iml" filepath="$PROJECT_DIR$/Lab01/Lab01.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lab02/Lab02.iml" filepath="$PROJECT_DIR$/Lab02/Lab02.iml" />
       <module fileurl="file://$PROJECT_DIR$/MaxPartialSum/MaxPartialSum.iml" filepath="$PROJECT_DIR$/MaxPartialSum/MaxPartialSum.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TowersOfHanoi/TowersOfHanoi.iml" filepath="$PROJECT_DIR$/TowersOfHanoi/TowersOfHanoi.iml" />
     </modules>
   </component>
 </project>

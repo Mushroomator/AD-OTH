@@ -6,27 +6,37 @@ import java.util.Random;
 public class PartialSum {
 
     public static void main(String[] args){
-        int[] test = fillRand(1000, -100, 100);
+        int[] test = fillRand(100, -100, 100);
         System.out.println("Test values: " + Arrays.toString(test));
 
-        // kubic runtime
-        long startKubic = System.currentTimeMillis();
-        System.out.println("Kubic: " + maxPartialSumKubic(test));
-        long endKubic = System.currentTimeMillis();
-
-        // quadratic runtime
-        long startQuadratic = System.currentTimeMillis();
-        System.out.println("Quadratic: " + maxPartialSumQuadratic(test));
-        long endQuadratic = System.currentTimeMillis();
-
         // linear runtime
+        System.out.println("Starting algorithm with linear runtime behavior...");
         long startLinear = System.currentTimeMillis();
         System.out.println("Linear: " + maxPartialSumLinear(test));
         long endLinear = System.currentTimeMillis();
+        System.out.println("Time elapsed (Linear): " + Double.toString(startLinear - startLinear) + "ms\n");
 
-        System.out.println("\nTime elapsed (Kubic): " + Double.toString(endKubic - startKubic) + "ms");
-        System.out.println("Time elapsed (Quadratic): " + Double.toString(endQuadratic - startQuadratic) + "ms");
-        System.out.println("Time elapsed (Linear): " + Double.toString(startLinear - startLinear) + "ms");
+        // superlinear runtime
+        System.out.println("Starting algorithm with superlinear runtime behavior...");
+        long startSupLin = System.currentTimeMillis();
+        System.out.println("Superlinear: " + maxPartialSumSuperlinearDivAndConq(test, 0, test.length - 1));
+        long endSupLin = System.currentTimeMillis();
+        System.out.println("Time elapsed (Superlinear): " + Double.toString(endSupLin - startSupLin) + "ms\n");
+
+        // quadratic runtime
+        System.out.println("Starting algorithm with quadratic runtime behavior...");
+        long startQuadratic = System.currentTimeMillis();
+        System.out.println("Quadratic: " + maxPartialSumQuadratic(test));
+        long endQuadratic = System.currentTimeMillis();
+        System.out.println("Time elapsed (Quadratic): " + Double.toString(endQuadratic - startQuadratic) + "ms\n");
+
+        // kubic runtime
+        System.out.println("Starting algorithm with kubic runtime behavior...");
+        long startKubic = System.currentTimeMillis();
+        System.out.println("Kubic: " + maxPartialSumKubic(test));
+        long endKubic = System.currentTimeMillis();
+        System.out.println("Time elapsed (Kubic): " + Double.toString(endKubic - startKubic) + "ms\n");
+
     }
 
     public static int[] fillRand(int size, int start, int end){
@@ -55,9 +65,9 @@ public class PartialSum {
             for(int j = i; j < array.length; j++){
                 sum = 0;
                 // save indices
-                curIndices = new int[j - i];
+                curIndices = new int[j - i + 1];
                 int counter = 0;
-                for(int k = i; k < j; k++) {
+                for(int k = i; k <= j; k++) {   //here "<=" as always at least one value must be computed!
                     curIndices[counter] = k;
                     sum += array[k];
                     counter++;
@@ -68,6 +78,7 @@ public class PartialSum {
                 }
             }
         }
+
         int[] maxSumVals = new int[maxIndices.length];
         int i = 0;
         for(int idx: maxIndices){
@@ -117,5 +128,58 @@ public class PartialSum {
         }
 
         return max;
+    }
+
+    /**
+     * Calculate max. partial sum using divide & conquer algorithm (dividing array into 2 sub arrays).
+     * Runtime: O(n * log(n))
+     * Note: Using 5 subarrays and some trick a linear d&d algorithm (= O(n)) is possible.
+     * @param array array with ints
+     * @param first index of first element (starts at 0)
+     * @param last index of last element (length - 1)
+     * @return max. partial sum
+     */
+    public static int maxPartialSumSuperlinearDivAndConq(int[] array, int first, int last){
+        int length = last - first + 1;
+        if(length == 1) return array[first];
+        // divide array in two sub arrays (half them)
+        int newLength = length % 2 == 0 ? length >> 1 : (length >> 1) + 1;
+
+        // calculate indices for recursion
+        int end1stHalf = first + newLength - 1;
+        int start2ndHalf = end1stHalf + 1;
+
+        // calculate sum "in middle" in case max. partial sum spans across both subarrays
+
+        // Another way is to do this is to decrement end1stHalf and increment start2ndHalf by 1 to initialize the sum1stHalf to array[end1stHalf] and sum2ndHalf to array[start2ndHalf].
+        // This would save one operation per while loop as the initial value is computed already, making it one tiny bit faster than this implementation.
+        int i = end1stHalf;
+        int sum1stHalf = Integer.MIN_VALUE,
+            curSum = 0;
+
+        // calculate max. partial sum from middle to left
+        // while loops responsible for n iterations each time this function is called (= log(n) times)
+        while(i >= first){
+            curSum += array[i];
+            i--;
+            if(curSum > sum1stHalf) sum1stHalf = curSum;
+        }
+
+        // reset current sum
+        int j = start2ndHalf, sum2ndHalf = Integer.MIN_VALUE;
+        curSum = 0;
+
+        // calculate max. partial sum from middle to right
+        while(j <= last){
+            curSum += array[j];
+            j++;
+            if(curSum > sum2ndHalf) sum2ndHalf = curSum;
+        }
+
+        // return max. partial sum of the three calculated sums
+        return Math.max(
+                maxPartialSumSuperlinearDivAndConq(array, first, end1stHalf), Math.max( // max. partial sum in 1st subarray
+                        maxPartialSumSuperlinearDivAndConq(array, start2ndHalf, last), // max. partial sum in 2nd subarray
+                        sum1stHalf + sum2ndHalf));  // max. partial sum in middle
     }
 }
