@@ -33,6 +33,12 @@ public class SortingAlgorithms {
         var isEnd = System.currentTimeMillis();
         printResult("Insertion sort", ssEnd - ssStart, ssSorted);
 
+        // Quick sort
+        var qsStart = System.currentTimeMillis();
+        var qsSorted = bubbleSort(arrayToSortLecture);
+        var qsEnd = System.currentTimeMillis();
+        printResult("Quick sort", qsEnd - qsStart, qsSorted);
+
         return;
     }
 
@@ -133,6 +139,72 @@ public class SortingAlgorithms {
             array[i] = key;
         }
 
+        return array;
+    }
+
+    /**
+     * Quick sort algorithm for sorting in ascending order.
+     * Runtime:
+     *  - Best Case: O(n log n) -> Pivot elements splits array in two equally sized subarrays every time
+     *  - Worst Case: O(N²) -> Elements already in sorted order (asc or desc): subarray only reduced by one each iteration => gaussian summation formula
+     *  - Average Case: O(n log n) -> Effort depends on choice of pivot. Assume choice of pivot is equally distributed between elements of array.
+     * @param array to be sorted
+     * @param first index of first element
+     * @param last index of last element
+     * @return sorted array
+     */
+    public static int[] quickSort(int[] array, int first, int last){
+        // Only sort if at least two elements are there to sort
+        if(first < last){
+            // Split array in two halfs: [Values smaller than pivot elem., ..., Pivot elem, ... , Values higher than pivot elem.]
+            int part = qsPreparePartition(array, first, last);
+            // sort all smaller elements
+            quickSort(array, first, part - 1);
+            // sort all greater elements
+            quickSort(array, part + 1, last);
+            // Note: Dont touch pivot as it is already at the spot it is supposed to be
+        }
+        return array;
+    }
+
+    /**
+     * Split array logically in two halfs. Split element is so called pivot element.
+     * Moves all values lower than pivot to left and all items greater than pivot to right.
+     * Note: First element is chosen as pivot, which is the worst possible choice.
+     * @param array to be sorted
+     * @param first index of first element
+     * @param last index of last element
+     * @return sorted array
+     */
+    public static int qsPreparePartition(int[] array, int first, int last){
+        int part = first - 1; // Alternative: set it to f and reverse order in if (first swap, then increment)
+        int pivot = array[first]; // Choose first element here, but this is the worst possible choice
+        for(int i = first; i < last; i++){
+            if(array[i] < pivot){
+                // increment size of "smaller partition"
+                part++;
+                // Swap smaller value to left side of pivot
+                swap(array, part, i);
+            }
+        }
+        // Move pivot to spot it belongs
+        // Pivot is first element in this implementation.
+        swap(array, part, first);
+        return part;
+    }
+
+    /**
+     * Swap values of two indices in an array.
+     * In place swap, so no new array is created.
+     * @param array array which contains both values
+     * @param i index to be swapped
+     * @param j index to be swapped
+     * @return array with swapped indices
+     */
+    public static int[] swap (int[] array, int i, int j){
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
         return array;
     }
 
