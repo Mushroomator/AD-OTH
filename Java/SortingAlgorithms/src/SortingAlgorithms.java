@@ -2,15 +2,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class SortingAlgorithms {
 
     public static void main(String[] args){
         int[] arrayToSortLecture = { 34, 45, 12, 34, 23, 18, 38, 17, 43, 7};
-        int[] randArray = fillArrayRand(50, -100, 100);
+        int[] test = new int[]{36, 28, 16, 11, 11, 1, 16, 28, 8, 30};
+        int[] randArray = fillArrayRand(10, 0, 50);
 
         // working array
-        int[] curArray = arrayToSortLecture;
+        int[] curArray = test;
 
         System.out.printf("""
                 +-------------------------------------------+
@@ -83,6 +85,27 @@ public class SortingAlgorithms {
         var msSorted = mapSort(msCurArray, 1); // 1.25 is the optimal value (see proof in topic hashing)
         var msEnd = System.currentTimeMillis();
         printResult("Map sort", msEnd - msStart, msSorted);
+
+        // Test binary search on sorted array
+        var toBeFound = 17;
+        System.out.printf("""
+                +-------------------------------------------+
+                | Binary Search in sorted array             |
+                +-------------------------------------------+
+                Sorted array: %s
+                Value to be found: %d
+                """, Arrays.toString(msSorted), toBeFound);
+
+        var rekBinSearch = binarySearchRek(msSorted, toBeFound);
+        System.out.printf("""
+                > %s:
+                \t Result: %d
+                """, "Recursive Binary Search", rekBinSearch);
+        var iterBinSearch = binarySearchIter(msSorted, toBeFound);
+        System.out.printf("""
+                > %s:
+                \t Result: %d
+                """, "Iterative Binary Search", iterBinSearch);
 
         return;
     }
@@ -264,7 +287,7 @@ public class SortingAlgorithms {
     public static int[] mergeSortExSitu(int[] array, int first, int last){
         // Check if there is more than one element
         if (first < last){
-            int middle = (first + last + 1) / 2;
+            int middle = first + ((last - first  + 1) / 2);
             // Sort each half of the array (if array.length mod 2 != 0 -> make left half smaller)
             mergeSortExSitu(array, first,  middle - 1);
             mergeSortExSitu(array, middle, last);
@@ -383,10 +406,11 @@ public class SortingAlgorithms {
                     } else {
                         // Right is smaller
                         // array[startRight] needs to be at current position array[first + i]
-                        // similar to insertion sort move the gap from left to right and insert at the correct position
                         int toBeInserted = array[currentPosition];
                         array[currentPosition] = array[startRight];
-                        // start one value next to start right as we now toBeInserted is bigger than start right
+                        // similar to insertion sort move the gap from left to right and insert at the correct position
+                        // there now is a "gap" at array[startRight]
+                        // start one value next to start right as we toBeInserted is bigger than start right (otherwise we wouldnt be in this else branch)
                         int j = startRight + 1;
                         // find position where toBeInserted has to go
                         // shift value to left as long as it is smaller or equal to toBeInserted and j is not out of bounds
@@ -530,7 +554,31 @@ public class SortingAlgorithms {
             // decrement amount of this value
             bin[j]--;   // effort n
         }
+
         return array;
+    }
+
+    public static int[] countSortImproved(int[] array, int max, int min){
+        int k = max - min + 1;
+        int[] countArr = new int[k];
+
+        for(int i = 0; i < array.length; i++) countArr[array[i] - min]++;
+        for(int i = 1; i < countArr.length; i++) countArr[i] += countArr[i-1];
+
+        // new array, otherwise values in array[] would be overwritten, but they are still required
+        int[] output = new int[array.length];
+        // Iterate from back, otherwise count sort is NOT stable,
+        // e.g. count[] = [0, 2(a), 2(b), 3]
+        // from front: 2(a) will place the spot of array[1] will be index 2; then count is decreased so 2(b) will be placed a spot 1 = before 2(a) -> NOT STABLE
+        // from back: 2(b) wil be placed at spot 2; count of 2s will be decreased and 2(a) wil be placed one spot before 2(b) -> STABLE
+        for(int i = array.length - 1; i >= 0; i--) {
+            int lookupVal = array[i] - min;
+            output[countArr[lookupVal] - 1] = array[i];
+            countArr[lookupVal]--;
+        }
+
+        for(int i = 0; i < array.length; i++) array[i] = output[i];
+        return output;
     }
 
     /**
@@ -545,7 +593,7 @@ public class SortingAlgorithms {
             if(array[i] > maxixum) maxixum = array[i];
             if(array[i] < minimum) minimum = array[i];
         }
-        return countSort(array, maxixum, minimum);
+        return countSortImproved(array, maxixum, minimum);
     }
 
     /**
@@ -577,7 +625,7 @@ public class SortingAlgorithms {
 
         // calculate distance between values
         // this will be divided from
-        double d = (double)(max - min + 1) / c * array.length;
+        double d = (double)(max - min) / (c * array.length - 1);
         // create new array for values to be copied to
         int[] bin = new int[(int) ((double)array.length * c)];
 
@@ -589,7 +637,9 @@ public class SortingAlgorithms {
         for (int i = 0; i < array.length; i++){
             // index of element i
             // e.g. if values have avg. distance of 2 they have to be mapped on indexes half of that
-            int index = (int) ((double)(i - min) / d);
+            System.out.println("Arr[i]: " + array[i] + " Min: " + min + " D: " + d);
+            int index = (int) ((double)(array[i] - min) / d);
+            System.out.println(index);
             int toBeInserted = array[i];
             boolean goToLeft = false;
 
@@ -623,6 +673,7 @@ public class SortingAlgorithms {
             }
             // do actual insert operation
             bin[index] = toBeInserted;
+            System.out.println(Arrays.toString(bin));
         }
 
         // copy back into original array
@@ -631,6 +682,61 @@ public class SortingAlgorithms {
         }
 
         return array;
+    }
+
+    /**
+     * Binary serach for an element in a !!!sorted!!! array. Recursive implementation.
+     * Returns index of element in array if present or -1 otherwise.
+     * @param array sorted array which should be searched
+     * @param toBeFound value to be searched for
+     * @return index of element in array if present or -1 otherwise
+     */
+    public static int binarySearchRek(int[] array, int toBeFound){
+        return binarySearchRek(array, 0, array.length - 1, toBeFound);
+    }
+
+    /**
+     * Binary serach for an element in a !!!sorted!!! array. Recursive implementation.
+     * Returns index of element in array if present or -1 otherwise.
+     * @param array sorted array which should be searched
+     * @param first start index for search
+     * @param last end index for search
+     * @param toBeFound value to be searched for
+     * @return index of element in array if present or -1 otherwise
+     */
+    private static int binarySearchRek(int[] array, int first, int last, int toBeFound){
+        if(last >= first){
+            int middle = first + ((last - first) >> 1);
+            if(array[middle] == toBeFound)
+                return middle;
+            if(toBeFound < array[middle])
+                return binarySearchRek(array, first, middle - 1, toBeFound);
+            return binarySearchRek(array, middle + 1, last, toBeFound);
+        }
+        return -1;
+    }
+
+    /**
+     * Binary serach for an element in a !!!sorted!!! array. Iterative implementation.
+     * Returns index of element in array if present or -1 otherwise.
+     * @param array sorted array which should be searched
+     * @param toBeFound value to be searched for
+     * @return index of element in array if present or -1 otherwise
+     */
+    public static int binarySearchIter(int[] array, int toBeFound){
+        int last = array.length - 1;
+        int first = 0;
+        while (last >= first) {
+            int middle = first + ((last - first) >> 1);
+            if (array[middle] == toBeFound)
+                return middle;
+            if (toBeFound < array[middle]) {
+                last = middle - 1;
+            } else {
+                first = middle + 1;
+            }
+        }
+        return -1;
     }
 
 

@@ -1,10 +1,15 @@
+import java.time.temporal.ChronoUnit;
 import java.util.Stack;
 
-public class LinkedBinaryTree {
+/**
+ * Binary search tree.
+ * All methods iteratively and recursively implemented.
+ */
+public class BinarySearchTree {
 
     private Node root;
 
-    public LinkedBinaryTree(){
+    public BinarySearchTree(){
         this.root = null;
     }
 
@@ -35,6 +40,39 @@ public class LinkedBinaryTree {
             root = toBeInserted;
         }
         return toBeInserted;
+    }
+
+    /**
+     * Insert a node into the tree recursively.
+     * @param toBeInserted node to be inserted
+     * @return inserted node or null if it could not be inserted
+     */
+    public Node insertRec(Node toBeInserted){
+        return insertRec(root, toBeInserted);
+    }
+
+    /**
+     * Insert a node into the tree recursively.
+     * @param current current node
+     * @param toBeInserted node to be inserted
+     * @return inserted node or null if it could not be inserted
+     */
+    private Node insertRec(Node current, Node toBeInserted){
+        if(current == null){
+            toBeInserted.setLeft(null);
+            toBeInserted.setRight(null);
+            current = toBeInserted;
+        }
+        if(toBeInserted.getKey() == current.getKey()) throw new RuntimeException("Duplicate key!");
+        else if(toBeInserted.getKey() < current.getKey()) {
+            var left = insertRec(current.getLeft(), toBeInserted);
+            current.setLeft(left);
+        }
+        else {
+            var right = insertRec(current.getRight(), toBeInserted);
+            current.setRight(right);
+        }
+        return current;
     }
 
     public void printIterInorder(){
@@ -89,9 +127,9 @@ public class LinkedBinaryTree {
      * Print tree using recursive implementation.
      * @param order oder in which the tree should be printed.
      */
-    public void printRecursive(Traversal order){
+    public void printRec(Traversal order){
         if(root != null) {
-            printNodeRecursive(order, root);
+            printNodeRec(order, root);
             System.out.println();
         }
     }
@@ -101,32 +139,32 @@ public class LinkedBinaryTree {
      * @param order order in which the node should be printed
      * @param node current node to be printed
      */
-    public void printNodeRecursive(Traversal order, Node node){
+    public void printNodeRec(Traversal order, Node node){
         if(node != null){
             switch (order){
                 case INORDER -> {
                     System.out.print("(");
-                    printNodeRecursive(order, node.getLeft());
+                    printNodeRec(order, node.getLeft());
                     System.out.print(",");
                     System.out.print(node.getKey());
                     System.out.print(",");
-                    printNodeRecursive(order, node.getRight());
+                    printNodeRec(order, node.getRight());
                     System.out.print(")");
                 }
                 case PREORDER -> {
                     System.out.print("(");
                     System.out.print(node.getKey());
                     System.out.print(",");
-                    printNodeRecursive(order, node.getLeft());
+                    printNodeRec(order, node.getLeft());
                     System.out.print(",");
-                    printNodeRecursive(order, node.getRight());
+                    printNodeRec(order, node.getRight());
                     System.out.print(")");
                 }
                 case POSTORDER -> {
                     System.out.print("(");
-                    printNodeRecursive(order, node.getLeft());
+                    printNodeRec(order, node.getLeft());
                     System.out.print(",");
-                    printNodeRecursive(order, node.getRight());
+                    printNodeRec(order, node.getRight());
                     System.out.print(",");
                     System.out.print(node.getKey());
                     System.out.print(")");
@@ -143,7 +181,6 @@ public class LinkedBinaryTree {
      * @return node if found or null if not
      */
     public Node contains(Node node){
-        if(root == null) return null;
         Node current = root;
         while (current != null){
             if(current.getKey() == node.getKey()) return current;   // node found -> return it
@@ -155,14 +192,35 @@ public class LinkedBinaryTree {
     }
 
     /**
+     * Checks if node is in the tree. Recursive implementation.
+     * @param node node to be searched for
+     * @return node if found or null if not
+     */
+    public Node containsRec(Node node){
+        return containsRec(root, node);
+    }
+
+    /**
+     * Find node in tree. Recursive implementation. PRIVATE as this is only to be used internally.
+     * @param current current node
+     * @param node node to be searched for
+     * @return node if found or null if not
+     */
+    private Node containsRec(Node current, Node node){
+        // no more nodes --> node does not exist
+        if(current == null) return null;
+        if(node.getKey() == current.getKey()) return current;
+        else if(node.getKey() < current.getKey()) return containsRec(current.getLeft(), node);
+        else return containsRec(current.getRight(), node);
+    }
+
+    /**
      * Delete a node from the tree.
      * @param toBeDeleted node to be deleted
      * @return true when node was deleted, false otherwise
      */
     public boolean delete(Node toBeDeleted){
         if(root == null) return false;
-
-        // TODO handle case: root node
 
         Node current = root;
         Node predecessor = null;
@@ -276,5 +334,59 @@ public class LinkedBinaryTree {
         // check whether the successor node is left or right of its predecessor
         if(successor.getKey() < predecessor.getKey()) predecessor.setLeft(successor);
         else predecessor.setRight(successor);
+    }
+
+    public void removeRec(Node toBeRemoved){
+        this.root = removeRec(this.root, toBeRemoved);
+    }
+
+    private Node removeRec(Node current, Node toBeRemoved){
+        if(current == null) return null;
+        if(toBeRemoved.getKey() < current.getKey()) {
+            var left = removeRec(current.getLeft(), toBeRemoved);
+            current.setLeft(left);
+        }
+        else if (toBeRemoved.getKey() > current.getKey()){
+            var right = removeRec(current.getRight(), toBeRemoved);
+            current.setRight(right);
+        }
+        else {
+            if(current.getLeft() != null && current.getRight() != null){
+                var inorderSuccessor = getLeftMostChild(current.getRight());
+                // Delete inorder successsor
+                var right = removeRec(current.getRight(), inorderSuccessor);
+                // Set successors
+                inorderSuccessor.setLeft(current.getLeft());
+                inorderSuccessor.setRight(right);
+                // Delete current and return inorderSuccessor (as current)
+                current = inorderSuccessor;
+            } else {
+                if(current.getLeft() != null) current = current.getLeft();
+                else current = current.getRight();
+            }
+        }
+        return current;
+    }
+
+    /**
+     * Get left most child of any node or null if there is none.
+     * @param node node which left most child should be returned.
+     * @return left most child or null if there is none
+     */
+    private Node getLeftMostChild(Node node){
+        var current = node;
+        while (current != null){
+            if(current.getLeft() == null) return current;
+            current = current.getLeft();
+        }
+        return node;
+    }
+
+    /**
+     * Delete tree and release allocated memory.
+     */
+    public void deleteTree(){
+        // remove reference to root; Garbage collector takes care of the rest
+        this.root = null;
     }
 }

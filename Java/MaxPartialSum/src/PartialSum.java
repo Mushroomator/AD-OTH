@@ -6,7 +6,9 @@ import java.util.Random;
 public class PartialSum {
 
     public static void main(String[] args){
-        int[] test = fillRand(100, -100, 100);
+        var randArr = fillRand(100, -100, 100);
+        var lectureArr = new int[]{ -13, 25, 34, 12, -3, 7, -87, 28, -77, 11};
+        int[] test = lectureArr;
         System.out.println("Test values: " + Arrays.toString(test));
 
         // linear runtime

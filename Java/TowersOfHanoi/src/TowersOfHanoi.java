@@ -69,7 +69,6 @@ public class TowersOfHanoi {
             endT[numDisks - 1] = startT[numDisks - 1];
             printInstruction(startTower, endTower, endT[numDisks - 1]);
             solve(numDisks -1, utilTower, startTower, endTower);
-
         }
     }
 

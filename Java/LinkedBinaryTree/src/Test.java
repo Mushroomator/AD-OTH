@@ -18,7 +18,7 @@ public class Test {
                 """);
 
         // Create tree
-        LinkedBinaryTree tree = new LinkedBinaryTree();
+        BinarySearchTree tree = new BinarySearchTree();
         System.out.println("Tree has been created.");
 
         // fill tree
@@ -36,11 +36,11 @@ public class Test {
 
         // print tree recursively
         System.out.println("Recursive Inorder:");
-        tree.printRecursive(Traversal.INORDER);
+        tree.printRec(Traversal.INORDER);
         System.out.println("Recursive Preorder:");
-        tree.printRecursive(Traversal.PREORDER);
+        tree.printRec(Traversal.PREORDER);
         System.out.println("Recursive Postorder:");
-        tree.printRecursive(Traversal.POSTORDER);
+        tree.printRec(Traversal.POSTORDER);
 
         // Print tree iteratively
         System.out.println("Iterative Inorder:");
@@ -55,33 +55,36 @@ public class Test {
                 --------------------------------------
                 """);
         System.out.println("Before deletion: ");
-        tree.printRecursive(Traversal.INORDER); // Expected: (((n,10,n),12,((n,15,n),23,n)),35,(n,45,(n,85,n)))
+        tree.printRec(Traversal.INORDER); // Expected: (((n,10,n),12,((n,15,n),23,n)),35,(n,45,(n,85,n)))
 
         // delete from tree
         Node toBeDeleted = new Node(12); // 12 is an inner node with two successors
         System.out.println("Deleting node %d".formatted(toBeDeleted.getKey()));
-        tree.delete(toBeDeleted);
+        tree.removeRec(toBeDeleted);
         System.out.println("Result after delete:");
-        tree.printRecursive(Traversal.INORDER); // Expected: (((n,10,n),15,(n,23,n)),35,(n,45,(n,85,n)))
+        tree.printRec(Traversal.INORDER); // Expected: (((n,10,n),15,(n,23,n)),35,(n,45,(n,85,n)))
+
 
 
         toBeDeleted.setKey(35); // 35 is root node with two successors
         System.out.println("Deleting node %d".formatted(toBeDeleted.getKey()));
-        tree.delete(toBeDeleted);
+        tree.removeRec(toBeDeleted);
         System.out.println("Result after delete:");
-        tree.printRecursive(Traversal.INORDER); // Expected: (((n,10,n),15,(n,23,n)),45,(n,85,n))
+        tree.printRec(Traversal.INORDER); // Expected: (((n,10,n),15,(n,23,n)),45,(n,85,n))
 
+        /*
         toBeDeleted.setKey(23); // 23 is a leaf node at this point
         System.out.println("Deleting node %d".formatted(toBeDeleted.getKey()));
-        tree.delete(toBeDeleted);
+        tree.removeRec(toBeDeleted);
         System.out.println("Result after delete:");
-        tree.printRecursive(Traversal.INORDER); // Expected: (((n,10,n),15,n),45,(n,85,n))
+        tree.printRec(Traversal.INORDER); // Expected: (((n,10,n),15,n),45,(n,85,n))
 
         toBeDeleted.setKey(15); // 15 is an inner node with one successor at this point
         System.out.println("Deleting node %d".formatted(toBeDeleted.getKey()));
-        tree.delete(toBeDeleted);
+        tree.removeRec(toBeDeleted);
         System.out.println("Result after delete:");
-        tree.printRecursive(Traversal.INORDER); // Expected: ((n,10,n),45,(n,85,n))
+        tree.printRec(Traversal.INORDER); // Expected: ((n,10,n),45,(n,85,n))
+        */
 
     }
 
