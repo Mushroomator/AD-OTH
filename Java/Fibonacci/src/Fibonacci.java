@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
 
@@ -6,15 +8,18 @@ public class Fibonacci {
     private static int n = 50;
 
     public static void main(String[] args){
+        System.out.println(args.length);
+        System.out.println(Arrays.toString(args));
         if(args.length > 1){
             try{
+                System.out.println(args[1]);
                 n = Integer.parseInt(args[1]);
             } catch (NumberFormatException e){
                 System.err.println("Argument must be a positive number.");
                 return;
             }
         }
-
+        System.out.printf("Calculating %dth Fibonacci number...\n", n);
         // iterative
         System.out.println("Starting iterative calculation...");
         var itStart = System.currentTimeMillis();
@@ -75,6 +80,7 @@ public class Fibonacci {
             i++;
             fib2 = fib1;
             fib1 = result;
+            System.out.printf("[%d/%d]\t%d. Fibonacci number: %d\n", i, n, i, result);
         }
 
         return result;

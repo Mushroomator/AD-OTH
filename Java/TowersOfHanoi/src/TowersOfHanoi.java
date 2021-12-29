@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.Locale;
-
 public class TowersOfHanoi {
 
     private static int numDisks = 3;
@@ -53,7 +50,7 @@ public class TowersOfHanoi {
      * Do not grant client access to this method, as wrong parameters (different sizes for towers and/ or size of towers not matching number of disks) could be given.
      * This method is purely to solve the problem using recursion and must not be called by the client.
      * @param numDisks amount of disks on start tower
-     * @param startT start tower
+     * @param startTower start tower
      * @param utilTower utility tower
      * @param endTower end/ target tower where all disks should be stored at the end
      */

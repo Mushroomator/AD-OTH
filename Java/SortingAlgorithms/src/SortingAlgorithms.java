@@ -1,14 +1,10 @@
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 public class SortingAlgorithms {
 
     public static void main(String[] args){
         int[] arrayToSortLecture = { 34, 45, 12, 34, 23, 18, 38, 17, 43, 7};
-        int[] test = new int[]{36, 28, 16, 11, 11, 1, 16, 28, 8, 30};
+        int[] test = new int[]{21, -6, -46, -14, 9, 43, -18, 9, 21, 20};
         int[] randArray = fillArrayRand(10, 0, 50);
 
         // working array
@@ -39,7 +35,7 @@ public class SortingAlgorithms {
         // Insertion sort
         var isCurArray = curArray.clone();
         var isStart = System.currentTimeMillis();
-        var isSorted = bubbleSort(isCurArray);
+        var isSorted = insertionSort(isCurArray);
         var isEnd = System.currentTimeMillis();
         printResult("Insertion sort", ssEnd - ssStart, ssSorted);
 
@@ -187,7 +183,7 @@ public class SortingAlgorithms {
      * @return sorted array
      */
     public static int[] insertionSort(int[] array){
-
+        if (array.length == 1) return array;
         // assume for element is sorted -> start at index 1
         for(int j = 1; j < array.length; j++){
             // save current value (to create a "gap")
@@ -204,7 +200,7 @@ public class SortingAlgorithms {
                 i--;
             }
             // right position for current value found (close "gap")
-            array[i] = key;
+            array[i+1] = key;
         }
 
         return array;
@@ -226,6 +222,7 @@ public class SortingAlgorithms {
         if(first < last){
             // Split array in two halfs: [Values smaller than pivot elem., ..., Pivot elem, ... , Values higher than pivot elem.]
             int part = qsPreparePartition(array, first, last);
+            System.out.println(Arrays.toString(array));
             // sort all smaller elements
             quickSort(array, first, part - 1);
             // sort all greater elements
@@ -251,6 +248,7 @@ public class SortingAlgorithms {
             if(array[i] <= pivot){  // important <= ! otherwise
                 // increment size of "smaller partition"
                 part++;
+                System.out.printf("Part: %d; i: %d\n", part, i);
                 // Swap smaller value to left side of pivot
                 swap(array, part, i);
             }
