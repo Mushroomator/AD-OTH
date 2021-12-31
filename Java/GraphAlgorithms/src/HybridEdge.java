@@ -42,8 +42,6 @@ public class HybridEdge<T> {
 
     @Override
     public String toString() {
-        return """
-                    %5s
-               %5s ------> %5s""".formatted(weight, from, to);
+        return "%5s -(%5s)-> %5s".formatted(from, weight, to);
     }
 }

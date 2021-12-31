@@ -14,7 +14,7 @@ public class UnionFindSet<T extends Comparable<T>> {
         this.key = key;
     }
 
-    public UnionFindSet<T> getRep(){
+    public UnionFindSet<T> getRepWithPathShortage(){
         var cur = rep;
         // Traverse up all nodes until the representative is the same as the current node
         // --> Topmost node is reached --> return it
@@ -31,6 +31,21 @@ public class UnionFindSet<T extends Comparable<T>> {
             node.rep = cur;
             node.height = 1;
         }
+        return cur;
+    }
+
+    /**
+     * Use this method to use the same method as it is applied in the lecture.
+     * The version with path shortage "getRepWithShortage()" does work and is faster, but may result in different
+     * appending operations as a lot of the time the height is the same (= 1) when using this approach.
+     * @return
+     */
+    public UnionFindSet<T> getRep(){
+        var cur = rep;
+        // Traverse up all nodes until the representative is the same as the current node
+        // --> Topmost node is reached --> return it
+        while (cur != cur.rep) cur = cur.rep;
+
         return cur;
     }
 }

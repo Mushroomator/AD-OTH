@@ -221,7 +221,10 @@ public class HybridGraph<T extends Comparable<T>> {
         // get all edges and sort them by ascending weight
         var edges = this.getEdges();
         // this sort merges using a stable (adapted) merge sort (Variation of TimSort) so O(|E| * log |E|) is guaranteed, which is important here!
-        edges.sort(Comparator.comparing(HybridEdge::getWeight));
+        // sort by weight is sufficient, but to apply have the same order as in the lecture also compare the "from" nodes and process smaller nodes first!
+        edges.sort(Comparator
+                .comparingDouble(HybridEdge<T>::getWeight)
+                .thenComparing(HybridEdge<T>::getFrom));
         printKruskalMinimalSpanningTreeResult(edges, uf, mst, stepCounter);
         for(var edge: edges){
             // Note:
@@ -248,24 +251,8 @@ public class HybridGraph<T extends Comparable<T>> {
     private void printKruskalMinimalSpanningTreeResult(List<HybridEdge<T>> sortedEdges, UnionFind<T> uf, List<HybridEdge<T>> mst, int step){
         // print all nodes and their representatives
         System.out.printf("\nStep: %s\n", step);
-        System.out.println("Sorted edges: ");
-        for (int i = 0; i < sortedEdges.size(); i++){
-
-            if(i == step) {
-                System.out.println(
-                        """
-                        +-------------------+
-                        |      CURRENT      |
-                        +-------------------+
-                        %s
-                        +-------------------+""".formatted(sortedEdges.get(i))
-                );
-            }
-            else System.out.println(sortedEdges.get(i));
-        }
-        // each edge takes 21 characters to print to screen + "," and space --> 22 chars to print
-        System.out.println("              " + " ".repeat(step * 22) + "-".repeat(21) + "\n");
-        System.out.println("Union-Find data structure:");
+        printKruskalSpanningTreeResultEdges(sortedEdges,step);
+        System.out.println("\nUnion-Find data structure:");
         System.out.println("| Node  | Repr  |");
         System.out.println("|-------|-------|");
         uf.getSets().forEach((nodeKey, node) -> System.out.printf("| %5s | %5s |\n", nodeKey, node.getRep().key));
@@ -276,6 +263,31 @@ public class HybridGraph<T extends Comparable<T>> {
             mstWeight.updateAndGet(v -> (double) (v + edge.getWeight()));
         });
         System.out.println("Weight of Minimal Spanning Tree: " + mstWeight.get());
+    }
+
+    private void printKruskalSpanningTreeResultEdges(List<HybridEdge<T>> sortedEdges, int step){
+        System.out.println("Sorted edges: ");
+        var lineSb = new StringBuilder();
+        var headerLineSb = new StringBuilder();
+        var contentSb = new StringBuilder();
+        lineSb.append("+").append("-----------------------|");
+        contentSb.append("|").append(" Edge                  |");
+        headerLineSb.append("|").append(" Edge index            |");
+        for (int i = 0; i < sortedEdges.size(); i++){
+            contentSb.append(sortedEdges.get(i)).append(" |");
+            lineSb.append("-----------------------|");
+            if(i == step) {
+                headerLineSb.append("       CURRENT         |");
+            }
+            else {
+                headerLineSb.append("       %5s           |".formatted(i));
+            }
+        }
+        System.out.println(lineSb);
+        System.out.println(headerLineSb);
+        System.out.println(lineSb);
+        System.out.println(contentSb);
+        System.out.println(lineSb);
     }
 
     public List<HybridEdge<T>> getEdges(){

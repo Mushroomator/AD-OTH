@@ -29,15 +29,44 @@ public class UnionFind<T extends Comparable<T>> {
             if(repA.height > repB.height) repB.rep = repA;
             else if(repB.height > repA.height) repA.rep = repB;
             else {
+                // Trees have equal height!
+                // --> as this implementation does not use path shortage (which is the better option!) we must update the height of the tree
+                // as the tree will grow by 1, so the top-most node will have his height increased by 1
+                // special case to make sure the data structure behaves as defined in the lecture, but any another
+                // handling of trees with same height is also possible
+                // Here: Rep which with the "bigger" key is appended to rep with "smaller" key
+                if(a.compareTo(b) < 0) repB.rep = repA;
+                else repA.rep = repB;
+                repA.getRep().height += 1;
+            }
+        }
+        // no matter if the sets were merged already they are now merged, so all reps will be the same!
+        return repA.getRep();
+    }
+
+    public UnionFindSet<T> mergeWithPathShortage(T a, T b){
+        assert sets.containsKey(a);
+        assert sets.containsKey(b);
+
+        final var aSet = sets.get(a);
+        final var bSet = sets.get(b);
+        final var repA = aSet.getRep();
+        final var repB = bSet.getRep();
+
+        // only merge/ unify if they are not already members of the same set
+        if(repA != repB){
+            if(repA.height > repB.height) repB.rep = repA;
+            else if(repB.height > repA.height) repA.rep = repB;
+            else {
                 // special case to make sure the datastructure behaves as defined in the lecture, but any another
                 // handling of trees with same height is also possible
                 // Here: Rep which with the "bigger" key is appended to rep with "smaller" key
-                if(a.compareTo(b) > 0) repB.rep = repA;
+                if(a.compareTo(b) < 0) repB.rep = repA;
                 else repA.rep = repB;
             }
         }
         // no matter if the sets were merged already they are now merged, so all reps will be the same!
-        return repA.rep;
+        return repA.getRep();
     }
 
     public boolean isUnion(T a, T b){
