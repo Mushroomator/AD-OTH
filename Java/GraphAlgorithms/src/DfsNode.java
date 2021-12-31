@@ -1,4 +1,4 @@
-public class DfsNode<T> {
+public class DfsNode<T extends Comparable<T>> {
     public HybridNode<T> node;
     public NodeColor color;
     public T predecessor;

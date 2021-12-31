@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Objects;
 
-public class HybridNode<T> {
+public class HybridNode<T extends Comparable<T>> {
     private final T key;
     private HashMap<T, HybridEdge<T>> adjList;
 

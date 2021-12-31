@@ -1,4 +1,4 @@
-public class BfsNode<T> {
+public class BfsNode<T extends Comparable<T>> {
     public HybridNode<T> node;
     public Double distance;
     public NodeColor color;
