@@ -1,3 +1,5 @@
+package graphs.graph_adj_list_hybrid;
+
 import java.util.Objects;
 
 public class HybridEdge<T> {

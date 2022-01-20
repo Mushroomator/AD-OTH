@@ -1,3 +1,5 @@
+package graphs.graph_adj_list_hybrid;
+
 public class DfsNode<T extends Comparable<T>> {
     public HybridNode<T> node;
     public NodeColor color;

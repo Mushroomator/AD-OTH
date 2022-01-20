@@ -1,3 +1,9 @@
+package graphs.graph_adj_list_hybrid;
+
+
+import union_find.UnionFind;
+import union_find.UnionFindLecture;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,6 +67,13 @@ public class HybridGraph<T extends Comparable<T>> {
             var otherDir = new HybridEdge<T>(to, from, weight);
             toNode.connect(otherDir);
         }
+    }
+
+    public List<HybridEdge<T>> getEdges() {
+        // assumption: on average each node has 3 edges
+        var allEdges = new ArrayList<HybridEdge<T>>(nodes.size() * 3);
+        nodes.values().forEach(node -> allEdges.addAll(node.getAdjList().values()));
+        return allEdges;
     }
 
 
@@ -206,16 +219,17 @@ public class HybridGraph<T extends Comparable<T>> {
 
     /**
      * Important: This implementation does not check if the requirements for the existence of a minimal spanning tree
-     *            are fulfilled unexpected results/ error might occur in such case.
+     * are fulfilled unexpected results/ error might occur in such case.
+     *
      * @return List of edges that build minimal spanning tree.
      */
-    public List<HybridEdge<T>> kruskalMinimalSpanningTree(){
+    public List<HybridEdge<T>> kruskalMinimalSpanningTree() {
         int stepCounter = 0;
         // each spanning tree must consist of exactly |V| - 1 nodes, so set this as the initial capacity
         // so elements are not copied for resizing of array.
         var mst = new ArrayList<HybridEdge<T>>(nodes.size() - 1);
-        // create Union-Find data structure
-        var uf = new UnionFind<T>();
+        // create Union-Find data structure (choose either UnionFindLecture() or UnionFindOptimized())
+        var uf = new UnionFindLecture<T>();
         // create a set for each node
         nodes.keySet().forEach(uf::createSet);
         // get all edges and sort them by ascending weight
@@ -226,14 +240,14 @@ public class HybridGraph<T extends Comparable<T>> {
                 .comparingDouble(HybridEdge<T>::getWeight)
                 .thenComparing(HybridEdge<T>::getFrom));
         printKruskalMinimalSpanningTreeResult(edges, uf, mst, stepCounter);
-        for(var edge: edges){
+        for (var edge : edges) {
             // Note:
             // performance could be optimized here, since isUnion() and merge() do basically the same thing
             // but for reason of simplicity/ accordance to lecture keep it like this
 
             // Check if a cycle would be formed by checking if both sets have the same representative (are in the same set)
             System.out.printf("Checking if %s and %s can be merged without creating a cycle...\n", edge.getFrom(), edge.getTo());
-            if(!uf.isUnion(edge.getFrom(), edge.getTo())){
+            if (!uf.isUnion(edge.getFrom(), edge.getTo())) {
                 // no cycle is formed
                 // --> add edge to MST
                 // --> merge sets
@@ -248,10 +262,10 @@ public class HybridGraph<T extends Comparable<T>> {
         return mst;
     }
 
-    private void printKruskalMinimalSpanningTreeResult(List<HybridEdge<T>> sortedEdges, UnionFind<T> uf, List<HybridEdge<T>> mst, int step){
+    private void printKruskalMinimalSpanningTreeResult(List<HybridEdge<T>> sortedEdges, UnionFind<T> uf, List<HybridEdge<T>> mst, int step) {
         // print all nodes and their representatives
         System.out.printf("\nStep: %s\n", step);
-        printKruskalSpanningTreeResultEdges(sortedEdges,step);
+        printKruskalSpanningTreeResultEdges(sortedEdges, step);
         System.out.println("\nUnion-Find data structure:");
         System.out.println("| Node  | Repr  |");
         System.out.println("|-------|-------|");
@@ -265,7 +279,7 @@ public class HybridGraph<T extends Comparable<T>> {
         System.out.println("Weight of Minimal Spanning Tree: " + mstWeight.get());
     }
 
-    private void printKruskalSpanningTreeResultEdges(List<HybridEdge<T>> sortedEdges, int step){
+    private void printKruskalSpanningTreeResultEdges(List<HybridEdge<T>> sortedEdges, int step) {
         System.out.println("Sorted edges: ");
         var lineSb = new StringBuilder();
         var headerLineSb = new StringBuilder();
@@ -273,13 +287,12 @@ public class HybridGraph<T extends Comparable<T>> {
         lineSb.append("+").append("-----------------------|");
         contentSb.append("|").append(" Edge                  |");
         headerLineSb.append("|").append(" Edge index            |");
-        for (int i = 0; i < sortedEdges.size(); i++){
+        for (int i = 0; i < sortedEdges.size(); i++) {
             contentSb.append(sortedEdges.get(i)).append(" |");
             lineSb.append("-----------------------|");
-            if(i == step) {
+            if (i == step) {
                 headerLineSb.append("       CURRENT         |");
-            }
-            else {
+            } else {
                 headerLineSb.append("       %5s           |".formatted(i));
             }
         }
@@ -290,10 +303,167 @@ public class HybridGraph<T extends Comparable<T>> {
         System.out.println(lineSb);
     }
 
-    public List<HybridEdge<T>> getEdges(){
-        // assumption: on average each node has 3 edges
-        var allEdges = new ArrayList<HybridEdge<T>>(nodes.size() * 3);
-        nodes.values().forEach(node -> allEdges.addAll(node.getAdjList().values()));
-        return allEdges;
+
+    /**
+     * Calculate minimal spanning tree in a graph using Prim's algorithm.
+     *
+     * Important: This implementation does not check if the requirements for the existence of a minimal spanning tree
+     * are fulfilled unexpected results/ error might occur in such case.
+     *
+     * @return List of edges that form the minimal spanning tree
+     */
+    public List<HybridEdge<T>> primMinimalSpanningTree() {
+        int stepCounter = 0;
+        var mst = new LinkedList<HybridEdge<T>>();
+        var unprocessedNodes = new HashSet<T>();
+        var allNodes = new HashMap<T, PrioNode<T>>();
+
+        var nodeList = this.nodes.values().stream().toList();
+        if (nodeList.size() < 1) {
+            System.out.println("No nodes in graph!");
+            return mst;
+        }
+        var first = nodeList.get(0);
+        for (var node : nodeList) {
+            unprocessedNodes.add(node.getKey());
+            allNodes.put(node.getKey(), new PrioNode<>(Double.POSITIVE_INFINITY, node, null));
+        }
+        // set first nodes priority to zero
+        allNodes.put(first.getKey(), new PrioNode<>(0d, first, null));
+        var prioQueue = new PriorityQueue<PrioNode<T>>(allNodes.values());
+        printPrimSpanningTreeResultEdges(mst, stepCounter);
+        System.out.printf("Start node: %s", first);
+        while (!prioQueue.isEmpty()) {
+            // get node which can be connected with the lightest weight (takes O(log |V|) as Heap must be recreated)
+            var leastWeightNode = prioQueue.poll();
+            // loop over all neighbors of this node
+            var adjList = leastWeightNode.node.getAdjList();
+            for (var adj : adjList.values()) {
+                // lookup the corresponding PrimNode to the HybridNode in O(1) (PrimNode has just the fields relevant for Prim's algorithm; HybridNode just the key information relevant for a graph)
+                var adjPrimNode = allNodes.get(adj.getTo());
+                // lookup in set in O(1) if the node is still in the heap and has a smaller distance
+                if (unprocessedNodes.contains(adj.getTo()) && adj.getWeight() < adjPrimNode.getDistance()) {
+                    // remove node from priority queue and insert a new node for this node with the updated priority
+                    // there is no method decreaseKey()! --> take O(log |V|)
+                    prioQueue.remove(adjPrimNode);
+                    // Update priority and predecessor
+                    var updatedPrimNode = new PrioNode<>(adj.getWeight(), adjPrimNode.node, leastWeightNode.node);
+                    // update priority queue
+                    prioQueue.add(updatedPrimNode);
+                    // update map with all keys so predecessor is updated there as well
+                    allNodes.put(adjPrimNode.node.getKey(), updatedPrimNode);
+                }
+            }
+            // remove the node, which has already been removed from the heap from the set of unprocessed nodes
+            unprocessedNodes.remove(leastWeightNode.node.getKey());
+            // get edge which connects the least weighted node to the MST
+            if(leastWeightNode.predecessor != null){
+                // get adjacent nodes of predecessor...
+                var predAdjList = leastWeightNode.predecessor.getAdjList();
+                // and get the edge that connected the least weight node to the MST
+                var cheapestEdge = predAdjList.get(leastWeightNode.node.getKey());
+                // add edge to MST
+                mst.add(cheapestEdge);
+            }
+            stepCounter++;
+            printPrimSpanningTreeResultEdges(mst, stepCounter);
+        }
+        return mst;
+    }
+
+    /**
+     * Print (partial) result of Prim's minimal spanning tree algorithm.
+     * @param mst Edges of minimal spanning tree
+     * @param step step within the algorithm
+     */
+    private void printPrimSpanningTreeResultEdges(List<HybridEdge<T>> mst, int step) {
+        AtomicReference<Double> mstWeight = new AtomicReference<>(0d);
+        System.out.printf("Step %d", step);
+        System.out.println("\nMinimal Spanning Tree:");
+        mst.forEach(edge -> {
+            System.out.println(edge);
+            mstWeight.updateAndGet(v -> (double) (v + edge.getWeight()));
+        });
+        System.out.printf("Weight of Minimal Spanning Tree: %s\n", mstWeight);
+    }
+
+
+
+    /**
+     * Single-pair shortest path with Dijkstra's algorithm.
+     * @param sourceKey key of start node
+     * @return list of edges that
+     */
+    public void dijkstraAlgorithm(T sourceKey){
+        int stepCounter = 0;
+        var unprocessedNodes = new HashSet<T>(nodes.size());
+        var allNodes = new HashMap<T, PrioNode<T>>();
+        nodes.values().forEach(it -> {
+            unprocessedNodes.add(it.getKey());
+            allNodes.put(it.getKey(), new PrioNode<T>(Double.POSITIVE_INFINITY, nodes.get(it.getKey()), null));
+        });
+        var startNode = nodes.get(sourceKey);
+        if(startNode == null) throw new IllegalArgumentException("Source node %s does not exist.\n".formatted(sourceKey));
+
+        // set distance of start node to 0 and no predecessor
+        allNodes.put(startNode.getKey(), new PrioNode<>(0d, nodes.get(startNode.getKey()), null));
+
+        // build priority queue for all values
+        var prioQueue = new PriorityQueue<>(allNodes.values());
+
+
+        printDijkstraAlgorithmResult(prioQueue, allNodes, stepCounter);
+        while (!prioQueue.isEmpty()){
+            stepCounter++;
+            // get node with minimum distance (and remove that node from the priority queue)
+            var minNodePrio = prioQueue.poll();
+            var prioNode = allNodes.get(minNodePrio.node.getKey());
+
+            for (var edgeToAdjNode : minNodePrio.node.getAdjList().values()){
+                var adjNode = allNodes.get(edgeToAdjNode.getTo());
+                if(unprocessedNodes.contains(adjNode.node.getKey()) && minNodePrio.distance + edgeToAdjNode.getWeight() < adjNode.distance){
+                    // a shorter path has been found (-> update distance and predecessor)
+                    prioQueue.remove(adjNode);
+                    var shorterPathLen = minNodePrio.distance + edgeToAdjNode.getWeight();
+                    // updated node (new predecessor, new shortest distance)
+                    var newNode = new PrioNode<>(shorterPathLen, adjNode.node, minNodePrio.node);
+                    prioQueue.add(newNode);
+
+                    // only to be able to print everything out: update allNodes so for each node the latest distance can easily be retrieved
+                    allNodes.put(newNode.node.getKey(), newNode);
+                }
+            }
+
+
+/*            // Add shortest edge to
+            if(minNodePrio.predecessor != null){
+                // get edge from predecessor to node that has just been processed (there are no shorter paths to this node, as no negative edge values are allowed)
+                var predAdjList = minNodePrio.predecessor.getAdjList();
+                // shortest path
+                var shortestPathToPred = predAdjList.get(minNodePrio.node.getKey());
+                shortestPath.add(shortestPathToPred);
+            }*/
+            unprocessedNodes.remove(minNodePrio.node.getKey());
+            printDijkstraAlgorithmResult(prioQueue, allNodes, stepCounter);
+        }
+    }
+
+    private void printDijkstraAlgorithmResult(PriorityQueue<PrioNode<T>> priorityQueue, HashMap<T, PrioNode<T>> allNodes, int step){
+        System.out.printf("\nStep %s\n", step);
+        // Heap is not sorted! Smallest element is on top but that is it (here sort so that nodes are in sorted by their priority and lexicographically if the priority is the same)
+        // This is just so that we conform to standards defined within the lecture
+        System.out.printf("Heap: %s\n", priorityQueue.stream().sorted().toList());
+
+        System.out.print("""
+        | Node  | Dist      | Pred  |
+        |-------|-----------|-------|
+        """);
+
+        allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey(): "-" ));
+    }
+
+
+    public void floydWarshallAlgorithm(){
+        var arr = (T[][]) new Object[this.nodes.size()][this.nodes.size()];
     }
 }

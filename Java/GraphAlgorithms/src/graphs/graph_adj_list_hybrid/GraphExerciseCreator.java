@@ -1,3 +1,8 @@
+package graphs.graph_adj_list_hybrid;
+
+
+import graphs.graph_adj_list_hybrid.HybridGraph;
+
 public class GraphExerciseCreator {
     public static void main(String[] args) {
         // Create one of many provided graphs
@@ -36,6 +41,22 @@ public class GraphExerciseCreator {
                 +----------------------------------------+
                 """);
         exercise.kruskalMinimalSpanningTree();
+
+        System.out.println("""
+                
+                +----------------------------------------+
+                | Minimal Spanning Tree (Prim)           |
+                +----------------------------------------+
+                """);
+        exercise.primMinimalSpanningTree();
+
+        System.out.println("""
+                
+                +----------------------------------------+
+                | Dijkstra's algorithm           |
+                +----------------------------------------+
+                """);
+        exercise.dijkstraAlgorithm(0);
 
 
     }
@@ -116,6 +137,63 @@ public class GraphExerciseCreator {
         graph.addEdge(2, 3, false);
         graph.addEdge(2, 4, false);
         graph.addEdge(4, 5, false);
+        return graph;
+    }
+
+    public static HybridGraph<Integer> createExamPrimGraph(){
+        var graph = new HybridGraph<Integer>();
+        for(int i = 0; i < 21; i++) graph.addNode(i);
+        graph.addEdge(0, 6, 15d, false);
+        graph.addEdge(0, 1, 9d, false);
+        graph.addEdge(1, 7, 1d, false);
+        graph.addEdge(1, 2, 2d, false);
+        graph.addEdge(2, 8, 17d, false);
+        graph.addEdge(2, 3, 8d, false);
+        graph.addEdge(3, 9, 13d, false);
+        graph.addEdge(3, 4, 14d, false);
+        graph.addEdge(4, 10, 21d, false);
+        graph.addEdge(4, 5, 18d, false);
+        graph.addEdge(5, 10, 1d, false);
+        graph.addEdge(10, 14, 11d, false);
+        graph.addEdge(10, 9, 12d, false);
+        graph.addEdge(9, 14, 10d, false);
+        graph.addEdge(9, 8, 2d, false);
+        graph.addEdge(8, 13, 4d, false);
+        graph.addEdge(8, 7, 15d, false);
+        graph.addEdge(7, 12, 13d, false);
+        graph.addEdge(7, 6, 21d, false);
+        graph.addEdge(6, 11, 19d, false);
+        graph.addEdge(11, 15, 5d, false);
+        graph.addEdge(11, 12, 19d, false);
+        graph.addEdge(12, 16, 3d, false);
+        graph.addEdge(12, 13, 10d, false);
+        graph.addEdge(13, 17, 17d, false);
+        graph.addEdge(13, 14, 9d, false);
+        graph.addEdge(14, 17, 9d, false);
+        graph.addEdge(17, 19, 7d, false);
+        graph.addEdge(17, 16, 7d, false);
+        graph.addEdge(16, 19, 16d, false);
+        graph.addEdge(16, 15, 11d, false);
+        graph.addEdge(15, 18, 8d, false);
+        graph.addEdge(18, 20, 8d, false);
+        graph.addEdge(18, 19, 14d, false);
+        graph.addEdge(19, 20, 6d, false);
+        return graph;
+    }
+
+    public static HybridGraph<Integer> createLectureDijkstraAlgorithmGraph(){
+        var graph = new HybridGraph<Integer>();
+        for(int i = 0; i < 5; i++) graph.addNode(i);
+        graph.addEdge(0, 1,  3d, true);
+        graph.addEdge(0, 3,  5d, true);
+        graph.addEdge(1, 2,  6d, true);
+        graph.addEdge(1, 3,  1d, true);
+        graph.addEdge(2, 4,  1d, true);
+        graph.addEdge(3, 1,  1d, true);
+        graph.addEdge(3, 2,  4d, true);
+        graph.addEdge(3, 4,  6d, true);
+        graph.addEdge(4, 0,  3d, true);
+        graph.addEdge(4, 2,  7d, true);
         return graph;
     }
 }

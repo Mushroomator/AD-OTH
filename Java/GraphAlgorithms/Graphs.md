@@ -38,11 +38,14 @@ Each graph has different attributes which can be seen looking at the graph but a
 
 
 ### Algorithms
-| Abbreviation | Name                  |
-| ------------ | --------------------- |
-| BFS          | Breadth-First Search  |
-| DFS          | Depth-First Search    |
-| MST          | Minimal Spanning Tree |
+| Abbreviation | Name                                      | Prerequisites                                                            |
+|--------------|-------------------------------------------|--------------------------------------------------------------------------|
+| BFS          | Breadth-First Search                      |                                                                          |
+| DFS          | Depth-First Search                        |                                                                          |
+| MST          | Minimal Spanning Tree                     |                                                                          |
+| DIJ          | Dijkstra (single-pair shortest path)      | - No negative cycles within the graph<br/>- No negative weights on edges |
+| BMF          | Bellmann-Ford (single-pair shortest path) | - No negative cycles within the graph                                    |
+| FWS          | Floyd-Warshall (all-pairs shortest paths) | - No negative cycles within the graph                                    |
 
 
 ## Undirected graphs
@@ -51,7 +54,7 @@ Each graph has different attributes which can be seen looking at the graph but a
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-no-red.svg)](https://shields.io/)
 [![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
 
-![](graph_images/Lecuture_BreadthFirstSearch_Sample.png)
+![](graph_images/Lecture_BreadthFirstSearch_Sample.png)
 #### Description
 Graph as shown in lecture 19 on page 4 for BFS and 13 for DFS.
 #### Node Count:
@@ -77,7 +80,7 @@ Graph as shown in lecture 19 on page 4 for BFS and 13 for DFS.
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-no-red.svg)](https://shields.io/)
 [![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
 
-![](graph_images/Lecuture_BFS_DFS_Sample02.png)
+![](graph_images/Lecture_BFS_DFS_Sample02.png)
 #### Description
 Graph as shown in lecture 19 on page 22.
 #### Node Count:
@@ -125,7 +128,7 @@ Graph as shown in lecture 19 on page 22.
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
 [![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
 
-![](graph_images/Lecuture_MST_Sample.png)
+![](graph_images/Lecture_MST_Sample.png)
 #### Description
 Graph as shown in lecture 20 on page 13 for Kruskal's algorithm and page 24 for Prim's algorithm.
 #### Node Count:
@@ -149,14 +152,68 @@ Graph as shown in lecture 20 on page 13 for Kruskal's algorithm and page 24 for 
 7 8 1
 ```
 
+### createExamPrimGraph()
+[![Is a directed graph?](https://img.shields.io/badge/directed-no-red.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/Exam_SimilarPrimGraph.png)
+#### Description
+Graph similar to the graph in the exam for the summer term 2021 for the application of Prim's algorithms.
+#### Node Count:
+```
+21
+```
+#### Graph Data:
+```
+0 6 15
+0 1 9
+1 7 1
+1 2 2
+2 8 17
+2 3 8
+3 9 13
+3 4 14
+4 10 21
+4 5 18
+5 10 1
+10 14 11
+10 9 12
+9 14 10
+9 8 2
+8 13 4
+8 7 15
+7 12 13
+7 6 21
+6 11 19
+11 15 5
+11 12 19
+12 16 3
+12 13 10
+13 17 17
+13 14 9
+14 17 9
+17 19 7
+17 16 7
+16 19 16
+16 15 11
+15 18 8
+18 20 8
+18 19 14
+19 20 6
+```
+
+
+
 ## Directed graphs
+### createLectureTopologicalOrderSampleGraph()
 [![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-no-red.svg)](https://shields.io/)
 [![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS-ffffff.svg)](https://GitHub.com/Naereen/ama)
 
-![](graph_images/Lecuture_Topological_Order_Sample.png)
+![](graph_images/Lecture_Topological_Order_Sample.png)
 #### Description
-Graph as shown in lecture 19 on page 26.
+Graph as shown in lecture 21 on page 11.
 #### Node Count:
 ```
 9
@@ -173,4 +230,30 @@ Graph as shown in lecture 19 on page 26.
 6 7
 7 3
 
+```
+
+### createLectureDijkstraAlgorithmGraph()
+[![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20DIJ-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/Lecture_Dijkstra_Algorithm.png)
+#### Description
+Graph as shown in lecture 19 on page 26.
+#### Node Count:
+```
+5
+```
+#### Graph Data:
+```
+0 1 3
+0 3 5
+1 2 6
+1 3 1
+2 4 1
+3 1 1
+3 2 4
+3 4 6
+4 0 3
+4 2 7
 ```

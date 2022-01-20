@@ -1,3 +1,5 @@
+package graphs.graph_adj_matrix;
+
 public class AdjMatrixGraph {
     private int[][] adjMatrix;
 

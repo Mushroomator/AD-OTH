@@ -1,3 +1,5 @@
+package graphs.graph_adj_list_hybrid;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -33,7 +35,7 @@ public class HybridNode<T extends Comparable<T>> {
 
     @Override
     public String toString() {
-        return "HybridNode{" +
+        return "hybrid_graph.HybridNode{" +
                 "key=" + key +
                 ", adjList=" + adjList +
                 '}';
