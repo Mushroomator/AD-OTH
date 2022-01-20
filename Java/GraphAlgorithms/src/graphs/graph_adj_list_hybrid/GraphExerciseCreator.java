@@ -1,12 +1,9 @@
 package graphs.graph_adj_list_hybrid;
 
-
-import graphs.graph_adj_list_hybrid.HybridGraph;
-
 public class GraphExerciseCreator {
     public static void main(String[] args) {
         // Create one of many provided graphs
-        var exercise = createLectureMinimalSpanningTreeGraph();
+        var exercise = createLectureBellmannFordGraph();
 
         System.out.println("""
                 
@@ -53,10 +50,18 @@ public class GraphExerciseCreator {
         System.out.println("""
                 
                 +----------------------------------------+
-                | Dijkstra's algorithm           |
+                | Dijkstra's algorithm                   |
                 +----------------------------------------+
                 """);
         exercise.dijkstraAlgorithm(0);
+
+        System.out.println("""
+                
+                +----------------------------------------+
+                | Bellmann-Ford algorithm                |
+                +----------------------------------------+
+                """);
+        exercise.bellmannFord(0);
 
 
     }
@@ -194,6 +199,22 @@ public class GraphExerciseCreator {
         graph.addEdge(3, 4,  6d, true);
         graph.addEdge(4, 0,  3d, true);
         graph.addEdge(4, 2,  7d, true);
+        return graph;
+    }
+
+    public static HybridGraph<Integer> createLectureBellmannFordGraph(){
+        var graph = new HybridGraph<Integer>();
+        for(int i = 0; i < 5; i++) graph.addNode(i);
+        graph.addEdge(0, 1, 6d, true);
+        graph.addEdge(0, 3, 7d, true);
+        graph.addEdge(1, 2, 5d, true);
+        graph.addEdge(1, 3, 8d, true);
+        graph.addEdge(1, 4, -4d, true);
+        graph.addEdge(2, 1, -2d, true);
+        graph.addEdge(3, 2, -3d, true);
+        graph.addEdge(3, 4, 9d, true);
+        graph.addEdge(4, 0, 2d, true);
+        graph.addEdge(4, 2, 7d, true);
         return graph;
     }
 }

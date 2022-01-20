@@ -329,10 +329,11 @@ public class HybridGraph<T extends Comparable<T>> {
             allNodes.put(node.getKey(), new PrioNode<>(Double.POSITIVE_INFINITY, node, null));
         }
         // set first nodes priority to zero
-        allNodes.put(first.getKey(), new PrioNode<>(0d, first, null));
+        var startNode = new PrioNode<>(0d, first, null);
+        allNodes.put(first.getKey(), startNode);
         var prioQueue = new PriorityQueue<PrioNode<T>>(allNodes.values());
         printPrimSpanningTreeResultEdges(mst, stepCounter);
-        System.out.printf("Start node: %s", first);
+        System.out.printf("Start node: %s\n", startNode);
         while (!prioQueue.isEmpty()) {
             // get node which can be connected with the lightest weight (takes O(log |V|) as Heap must be recreated)
             var leastWeightNode = prioQueue.poll();
@@ -378,7 +379,7 @@ public class HybridGraph<T extends Comparable<T>> {
      */
     private void printPrimSpanningTreeResultEdges(List<HybridEdge<T>> mst, int step) {
         AtomicReference<Double> mstWeight = new AtomicReference<>(0d);
-        System.out.printf("Step %d", step);
+        System.out.printf("Step %d\n", step);
         System.out.println("\nMinimal Spanning Tree:");
         mst.forEach(edge -> {
             System.out.println(edge);
@@ -434,15 +435,6 @@ public class HybridGraph<T extends Comparable<T>> {
                 }
             }
 
-
-/*            // Add shortest edge to
-            if(minNodePrio.predecessor != null){
-                // get edge from predecessor to node that has just been processed (there are no shorter paths to this node, as no negative edge values are allowed)
-                var predAdjList = minNodePrio.predecessor.getAdjList();
-                // shortest path
-                var shortestPathToPred = predAdjList.get(minNodePrio.node.getKey());
-                shortestPath.add(shortestPathToPred);
-            }*/
             unprocessedNodes.remove(minNodePrio.node.getKey());
             printDijkstraAlgorithmResult(prioQueue, allNodes, stepCounter);
         }
@@ -462,6 +454,64 @@ public class HybridGraph<T extends Comparable<T>> {
         allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey(): "-" ));
     }
 
+    public void bellmannFord(T sourceNodeKey){
+        int stepCounter = 0;
+        // set initial capacity to number of nodes so no resizing of hashmap needs to be done (load factor will be applied in constructor)
+        var allNodes = new HashMap<T, PrioNode<T>>(nodes.size());
+        nodes.values().forEach(it -> allNodes.put(it.getKey(), new PrioNode<>(Double.POSITIVE_INFINITY, it, null)));
+
+        var startNode = nodes.get(sourceNodeKey);
+        if(startNode == null) throw new IllegalArgumentException("Source node %s does not exist.\n".formatted(sourceNodeKey));
+        // set distance of start node to 0 and no predecessor
+        allNodes.put(startNode.getKey(), new PrioNode<>(0d, nodes.get(startNode.getKey()), null));
+
+        var edges = getEdges();
+        // sort edges lexicographically
+        // this step is not required for the algorithm, but in order to adhere to the order defined in the lecture
+        // edges should be sorted by keys of the "from"-nodes in ascending order
+        edges.sort(Comparator.comparing(HybridEdge::getFrom));
+        System.out.print("""
+        Order in which edges are processed:
+        | Step  | From  | To    | Weight |
+        |-------|-------|-------|--------|
+        """);
+        for (int i = 1; i <= edges.size(); i++) {
+            var edge = edges.get(i - 1);
+            System.out.printf("| %5d | %5s | %5s | %6s |\n", i, edge.getFrom(), edge.getTo(), edge.getWeight());
+        }
+
+        printBellmannFordResult(allNodes, stepCounter);
+        for(int i = 0; i < nodes.size() - 1; i++){
+            stepCounter++;
+            for (var edge: edges){
+                var fromNode = allNodes.get(edge.getFrom());
+                var toNode = allNodes.get(edge.getTo());
+                if(toNode.distance > fromNode.distance + edge.getWeight()){
+                    allNodes.put(edge.getTo(), new PrioNode<>(fromNode.distance + edge.getWeight(), toNode.node, fromNode.node));
+                }
+            }
+            printBellmannFordResult(allNodes, stepCounter);
+        }
+
+        for (var edge: edges){
+            var fromNode = allNodes.get(edge.getFrom());
+            var toNode = allNodes.get(edge.getTo());
+            if(toNode.distance > fromNode.distance + edge.getWeight()){
+                System.out.println("Negative cycle");
+                return;
+            }
+        }
+    }
+
+    private void printBellmannFordResult(HashMap<T, PrioNode<T>> allNodes, int step){
+        System.out.printf("\nStep %s\n", step);
+        System.out.print("""
+        | Node  | Dist      | Pred  |
+        |-------|-----------|-------|
+        """);
+
+        allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey(): "-" ));
+    }
 
     public void floydWarshallAlgorithm(){
         var arr = (T[][]) new Object[this.nodes.size()][this.nodes.size()];

@@ -235,9 +235,9 @@ Graph as shown in lecture 21 on page 11.
 ### createLectureDijkstraAlgorithmGraph()
 [![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
-[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20DIJ-ffffff.svg)](https://GitHub.com/Naereen/ama)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20DIJ%2C%20BMF-ffffff.svg)](https://GitHub.com/Naereen/ama)
 
-![](graph_images/Lecture_Dijkstra_Algorithm.png)
+![](graph_images/Lecture_DijkstraAlgorithm.png)
 #### Description
 Graph as shown in lecture 19 on page 26.
 #### Node Count:
@@ -255,5 +255,31 @@ Graph as shown in lecture 19 on page 26.
 3 2 4
 3 4 6
 4 0 3
+4 2 7
+```
+
+### createLectureBellmannFordGraph()
+[![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20BMF-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/Lecture_BellmannFord.png)
+#### Description
+Graph as shown in lecture 21 on page 21.
+#### Node Count:
+```
+5
+```
+#### Graph Data:
+```
+0 1 6
+0 3 7
+1 2 5
+1 3 8
+1 4 -4
+2 1 -2
+3 2 -3
+3 4 9
+4 0 2
 4 2 7
 ```
