@@ -228,14 +228,14 @@ public class HybridGraph<T extends Comparable<T>> {
         // each spanning tree must consist of exactly |V| - 1 nodes, so set this as the initial capacity
         // so elements are not copied for resizing of array.
         var mst = new ArrayList<HybridEdge<T>>(nodes.size() - 1);
-        // create Union-Find data structure (choose either UnionFindLecture() or UnionFindOptimized())
-        var uf = new UnionFindLecture<T>();
+        // create Union-Find data structure (choose either UnionFindLecture() or UnionFindOptimized() (see ))
+        UnionFind<T> uf = new UnionFindLecture<T>();
         // create a set for each node
         nodes.keySet().forEach(uf::createSet);
         // get all edges and sort them by ascending weight
         var edges = this.getEdges();
         // this sort merges using a stable (adapted) merge sort (Variation of TimSort) so O(|E| * log |E|) is guaranteed, which is important here!
-        // sort by weight is sufficient, but to apply have the same order as in the lecture also compare the "from" nodes and process smaller nodes first!
+        // sort by weight is sufficient, but to have the same order as in the lecture also compare the "from" nodes and process smaller nodes first!
         edges.sort(Comparator
                 .comparingDouble(HybridEdge<T>::getWeight)
                 .thenComparing(HybridEdge<T>::getFrom));
@@ -243,6 +243,8 @@ public class HybridGraph<T extends Comparable<T>> {
         for (var edge : edges) {
             // Note:
             // performance could be optimized here, since isUnion() and merge() do basically the same thing
+            // (asymptotically identical, but both isUnion() and merge() take O(log n) so in total O(2 * log n); actually no need to traverse through inverse tree twice -> do merge within is union call if required or do not merge)
+            // With the UnionFindOptimized<T> this is not a problem as due to path shortening the first call in WC will take O(log n), and the second call will be in O(1), as all nodes on the path have been appended to the inverse tree root.
             // but for reason of simplicity/ accordance to lecture keep it like this
 
             // Check if a cycle would be formed by checking if both sets have the same representative (are in the same set)
@@ -395,7 +397,7 @@ public class HybridGraph<T extends Comparable<T>> {
      * @param sourceKey key of start node
      * @return list of edges that
      */
-    public void dijkstraAlgorithm(T sourceKey){
+    public void dijkstra(T sourceKey){
         int stepCounter = 0;
         var unprocessedNodes = new HashSet<T>(nodes.size());
         var allNodes = new HashMap<T, PrioNode<T>>();
@@ -497,7 +499,7 @@ public class HybridGraph<T extends Comparable<T>> {
             var fromNode = allNodes.get(edge.getFrom());
             var toNode = allNodes.get(edge.getTo());
             if(toNode.distance > fromNode.distance + edge.getWeight()){
-                System.out.println("Negative cycle");
+                System.out.println("Negative cycle!");
                 return;
             }
         }
@@ -513,7 +515,114 @@ public class HybridGraph<T extends Comparable<T>> {
         allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey(): "-" ));
     }
 
+    /**
+     * Compute all-pairs-shortest-path (APSP) using Floyd-Warshall algorithm.
+     * Runtime:
+     *  - BC/ AC/ WC: Θ(|V|³)
+     * @implNote As this graph is implemented as a graph with adjacency list, (a lot of) preprocessing needs to be done to generate the adjacency matrix (= distance matrix in iteration 0) required for the Floyd-Warshall algorithm.
+     *
+     */
     public void floydWarshallAlgorithm(){
-        var arr = (T[][]) new Object[this.nodes.size()][this.nodes.size()];
+        int stepCounter = 0;
+        var predecessorMatrix = new String[nodes.size()][nodes.size()];
+        var prevDistanceMatrix = new double[nodes.size()][nodes.size()];
+        var curDistanceMatrix = new double[nodes.size()][nodes.size()];
+        var mapKeysToArrayIdx = new HashMap<T, Integer>(nodes.size());
+        var mapReverse = new HashMap<Integer, T>(nodes.size());
+
+        for (int i = 0; i < prevDistanceMatrix.length; i++) {
+            for (int j = 0; j < prevDistanceMatrix.length; j++) {
+                if(i == j) {
+                    prevDistanceMatrix[i][j] = 0d;
+                    curDistanceMatrix[i][j] = 0d;
+                }
+                else {
+                    prevDistanceMatrix[i][j] = Double.POSITIVE_INFINITY;
+                    curDistanceMatrix[i][j] = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+
+        int i = 0;
+        for(var key: nodes.keySet()){
+            mapKeysToArrayIdx.put(key, i);
+            mapReverse.put(i, key);
+            i++;
+        }
+
+        int j = 0;
+        for (var node: nodes.values()){
+            for (var ajdNodeEdge: node.getAdjList().values()) {
+                var nodeToIdx = mapKeysToArrayIdx.get(ajdNodeEdge.getTo());
+                predecessorMatrix[j][nodeToIdx] = ajdNodeEdge.getFrom().toString();
+                //setGenericMultidimMatrix(predecessorMatrix, j, nodeToIdx, ajdNodeEdge.getFrom());
+                prevDistanceMatrix[j][nodeToIdx] = ajdNodeEdge.getWeight();
+            }
+            j++;
+        }
+
+        printFloydWarshallResult(prevDistanceMatrix, predecessorMatrix, mapReverse, stepCounter);
+        // end of initialization of Floyd-Warshall algorithm
+
+        // Start of actual algorithm
+        // Dynamic programming (bottom-up approach): loop over all possible "in between nodes k" with k in [0;|V| - 1]
+        // i. e.: start computing shortest paths with no nodes in between (-> adjacency matrix)
+        // , then use node 1 as "in between node" and check whether new shorter path can be found with paths going through node 1 -> shortest paths for "in between nodes" 0, 1 are found
+        // , then use node 2 as new "in between node" and check whether new shorter path can be found with paths going through node 2 -> shortest paths for "in between nodes" 0, 1, 2 are found
+        // and so on until all nodes have been used as "in between nodes"
+        for (int k = 0; k < curDistanceMatrix.length; k++) { // Θ(|V|)
+            stepCounter++;
+            // iterate over all "from nodes" in Θ(|V|)
+            for (int y = 0; y < curDistanceMatrix.length; y++) {
+                // iterate over all "to nodes" in Θ(|V|)
+                for (int x = 0; x < curDistanceMatrix.length; x++) {
+                    // shortest path which currently connects (or does not connect (= Infinity)) the two nodes y ("from node") and x ("to node")
+                    var curShortestPath = prevDistanceMatrix[y][x];
+                    // possible new path consists of: shortest path from node y to new "in between node k" + shortest from new "in between node k" to node x
+                    var newShortestPath = prevDistanceMatrix[y][k] + prevDistanceMatrix[k][x];
+                    // check whether the new path is shorter than the already existing one
+                    if(newShortestPath < curShortestPath){
+                        // update path length
+                        curDistanceMatrix[y][x] = newShortestPath;
+                        // update predecessor: new predecessor is now the predecessor of the shortest path from the "in between node k" to target node x
+                        // Note: be aware that new "in between node k" is not necessarily the immediate predecessor for path, though in small graphs with just a few nodes this may often be the case!
+                        predecessorMatrix[y][x] = predecessorMatrix[k][x];
+
+                    } else curDistanceMatrix[y][x] = curShortestPath; // copy previous shortest path and predecessor over to new distance matrix
+                }
+            }
+            printFloydWarshallResult(curDistanceMatrix, predecessorMatrix, mapReverse, stepCounter);
+            prevDistanceMatrix = curDistanceMatrix;
+        }
+    }
+
+    private void setGenericMultidimMatrix(List<List<T>> m, int i, int j, T value){
+        var curList = m.get(j);
+        curList.set(i, value);
+        m.set(j, curList);
+    }
+
+    private void printFloydWarshallResult(double[][] distMatrix, String[][] predecessorMatrix, Map<Integer, T> mapIndexToKey, int step){
+        System.out.printf("\n\n> Step: %d\n\tDistance matrix:\n\t %4s |", step, "");
+        for (int i = 0; i < distMatrix.length; i++) System.out.printf(" %8s ", mapIndexToKey.get(i));
+        System.out.println("\n\t" + "-".repeat(6) + "|" + "-".repeat(distMatrix.length * 10));
+        for (int i = 0; i < distMatrix.length; i++) {
+            System.out.printf("\t %4s |", mapIndexToKey.get(i));
+            for (int j = 0; j < distMatrix.length; j++) {
+                System.out.printf(" %8s ", distMatrix[i][j]);
+            }
+            System.out.println();
+        }
+
+        System.out.printf("\n\tPredecessor matrix:\n\t %4s |", "");
+        for (int i = 0; i < distMatrix.length; i++) System.out.printf(" %8s ", mapIndexToKey.get(i));
+        System.out.println("\n\t" + "-".repeat(6) + "|" + "-".repeat(distMatrix.length * 10));
+        for (int i = 0; i < distMatrix.length; i++) {
+            System.out.printf("\t %4s |", mapIndexToKey.get(i));
+            for (int j = 0; j < distMatrix.length; j++) {
+                System.out.printf(" %8s ", predecessorMatrix[i][j]);
+            }
+            System.out.println();
+        }
     }
 }

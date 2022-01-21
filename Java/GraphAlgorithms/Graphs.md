@@ -38,14 +38,14 @@ Each graph has different attributes which can be seen looking at the graph but a
 
 
 ### Algorithms
-| Abbreviation | Name                                      | Prerequisites                                                            |
-|--------------|-------------------------------------------|--------------------------------------------------------------------------|
-| BFS          | Breadth-First Search                      |                                                                          |
-| DFS          | Depth-First Search                        |                                                                          |
-| MST          | Minimal Spanning Tree                     |                                                                          |
-| DIJ          | Dijkstra (single-pair shortest path)      | - No negative cycles within the graph<br/>- No negative weights on edges |
-| BMF          | Bellmann-Ford (single-pair shortest path) | - No negative cycles within the graph                                    |
-| FWS          | Floyd-Warshall (all-pairs shortest paths) | - No negative cycles within the graph                                    |
+| Abbreviation | Name                                      | Prerequisites                                                         |
+|--------------|-------------------------------------------|-----------------------------------------------------------------------|
+| BFS          | Breadth-First Search                      | - connected (in this implementation)                                  |
+| DFS          | Depth-First Search                        |                                                                       |
+| MST          | Minimal Spanning Tree                     | - undirected graph<br/> - weighted<br/> - connected                   |
+| DIJ          | Dijkstra (single-pair shortest path)      | - No negative weights on edges                                        |
+| BMF          | Bellmann-Ford (single-pair shortest path) | - No negative cycles within the graph<br/> - weighted                 |
+| FWS          | Floyd-Warshall (all-pairs shortest paths) | - No negative cycles within the graph<br/> - weighted<br/> - directed |
 
 
 ## Undirected graphs
@@ -261,7 +261,10 @@ Graph as shown in lecture 19 on page 26.
 ### createLectureBellmannFordGraph()
 [![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
-[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20BMF-ffffff.svg)](https://GitHub.com/Naereen/ama)
+[![Graph contains negative edge weights?](https://img.shields.io/badge/negative%20edges-yes-green.svg)](https://shields.io/)
+[![Graph contains negative cycle?](https://img.shields.io/badge/negative%20cycle-no-red.svg)](https://shields.io/)
+[![Graph strongly connected?](https://img.shields.io/badge/strongly%20connected-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20BMF%2C%20FWS-ffffff.svg)](https://GitHub.com/Naereen/ama)
 
 ![](graph_images/Lecture_BellmannFord.png)
 #### Description
@@ -282,4 +285,32 @@ Graph as shown in lecture 21 on page 21.
 3 4 9
 4 0 2
 4 2 7
+```
+
+### createLectureFloydWarshallGraph()
+[![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Graph contains negative edge weights?](https://img.shields.io/badge/negative%20edges-yes-green.svg)](https://shields.io/)
+[![Graph contains negative cycle?](https://img.shields.io/badge/negative%20cycle-no-red.svg)](https://shields.io/)
+[![Graph strongly connected?](https://img.shields.io/badge/strongly%20connected-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20BMF%2C%20FWS-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/Lecture_FloydWarshall_Sample.png)
+#### Description
+Graph as shown in lecture 22 on page 22.
+#### Node Count:
+```
+5
+```
+#### Graph Data:
+```
+1 2 3
+1 3 8
+1 5 -4
+2 4 1
+2 5 7
+3 2 4
+4 1 2
+4 3 -5
+5 4 6
 ```
