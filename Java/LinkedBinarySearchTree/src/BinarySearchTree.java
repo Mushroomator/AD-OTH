@@ -79,7 +79,6 @@ public class BinarySearchTree {
         if(root == null) return;
         Node current = root;
         Stack<Node> visitedNodes = new Stack<>();
-        boolean done = false;
 
         while (current != null || visitedNodes.size() > 0){
             // go to left most node (= smallest value)
@@ -354,7 +353,7 @@ public class BinarySearchTree {
             if(current.getLeft() != null && current.getRight() != null){
                 var inorderSuccessor = getLeftMostChild(current.getRight());
                 // Delete inorder successsor
-                var right = removeRec(current.getRight(), inorderSuccessor);
+                var right = removeRec(current, inorderSuccessor);
                 // Set successors
                 inorderSuccessor.setLeft(current.getLeft());
                 inorderSuccessor.setRight(right);

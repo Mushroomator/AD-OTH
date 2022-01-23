@@ -117,6 +117,95 @@ public class HybridGraph<T extends Comparable<T>> {
     }
 
     /**
+     * Initialize graph from a weight matrix. An edge from a node y to x will be created for every weight that is not Double.NaN
+     * (Have a look at overloaded method to manually specify which value indicates a not existing node).
+     * Nodes will be named according to their index within the matrix.
+     * Examples:
+     * - weightM[0][1] = 4d --> edge from node 0 to node 1 with weight of 4 is created
+     * - weightM[3][4] = Double.NaN or Double.POSITIVE_INFINITY or Double.NEGATIVE_INFINITY --> no edge ix created from node 3 to 4
+     *
+     * @param weightM NxN matrix containing edges with weights
+     * @return graph with adjacency list with edges and weights as specified in weight matrix
+     */
+    public static HybridGraph<Integer> fromWeightMatrix(double[][] weightM) {
+        return fromWeightMatrix(weightM, Double.NaN);
+    }
+
+    /**
+     * Initialize graph from a weight matrix. An edge from a node y to x will be created for every finite weight (i.e. no NaN, infinity values).
+     * Nodes will be named according to their index within the matrix.
+     * Examples:
+     * - weightM[0][1] = 4d --> edge from node 0 to node 1 with weight of 4 is created
+     * - weightM[3][4] = Double.NaN or Double.POSITIVE_INFINITY or Double.NEGATIVE_INFINITY --> no edge ix created from node 3 to 4
+     *
+     * @param weightM NxN matrix containing edges with weights
+     * @param nonExistingEdge double value used to indicate an edge does not exist.
+     * @return graph with adjacency list with edges and weights as specified in weight matrix
+     */
+    public static HybridGraph<Integer> fromWeightMatrix(double[][] weightM, double nonExistingEdge) {
+        // create new graph
+        var graph = new HybridGraph<Integer>();
+
+        // create all nodes (assuming NxN matrix -> other matrices will not be accepted)
+        for (int i = 0; i < weightM.length; i++) graph.addNode(i);
+
+        // Create edges with their corresponding weights
+        for (int i = 0; i < weightM.length; i++) {
+            if (weightM.length != weightM[i].length)
+                throw new IllegalArgumentException("Adjacency matrix must be a NxN matrix!");
+            for (int j = 0; j < weightM[i].length; j++) {
+                if (weightM[i][j] == nonExistingEdge) {
+                    graph.addEdge(i, j, weightM[i][j], true);
+                }
+
+            }
+        }
+        return graph;
+    }
+
+    /**
+     * Get weight matrix of current graph (implemented with adjacency list).
+     * Edges that do not exist get value Double.NaN. Use overloaded method to change value for not existing edges.
+     * @return weight matrix
+     */
+    public double[][] toWeightMatrix(){
+        return toWeightMatrix(Double.NaN);
+    }
+
+    /**
+     * Get weight matrix of current graph (implemented with adjacency list).
+     * @param nonExistingEdge double value to set for edges that do not exist.
+     * @return weight matrix
+     */
+    public double[][] toWeightMatrix(double nonExistingEdge) {
+        var weightM = new double[nodes.size()][nodes.size()];
+
+        // initialize array with NaN values
+        for (int i = 0; i < weightM.length; i++) {
+            for (int j = 0; j < weightM.length; j++) {
+                weightM[i][j] = nonExistingEdge;
+            }
+        }
+
+        var mapKeysToArrayIdx = new HashMap<T, Integer>();
+        int i = 0;
+        for (var key : nodes.keySet()) {
+            mapKeysToArrayIdx.put(key, i);
+            i++;
+        }
+
+        int j = 0;
+        for (var node : nodes.values()) {
+            for (var ajdNodeEdge : node.getAdjList().values()) {
+                var nodeToIdx = mapKeysToArrayIdx.get(ajdNodeEdge.getTo());
+                weightM[j][nodeToIdx] = ajdNodeEdge.getWeight();
+            }
+            j++;
+        }
+        return weightM;
+    }
+
+    /**
      * Print (intermediate) result of breadth-first algorithm.
      *
      * @param step     ID for this step within the breadth-first algorithm
@@ -281,6 +370,10 @@ public class HybridGraph<T extends Comparable<T>> {
         System.out.println("Weight of Minimal Spanning Tree: " + mstWeight.get());
     }
 
+    public boolean contains(T key) {
+        return nodes.containsKey(key);
+    }
+
     private void printKruskalSpanningTreeResultEdges(List<HybridEdge<T>> sortedEdges, int step) {
         System.out.println("Sorted edges: ");
         var lineSb = new StringBuilder();
@@ -308,7 +401,7 @@ public class HybridGraph<T extends Comparable<T>> {
 
     /**
      * Calculate minimal spanning tree in a graph using Prim's algorithm.
-     *
+     * <p>
      * Important: This implementation does not check if the requirements for the existence of a minimal spanning tree
      * are fulfilled unexpected results/ error might occur in such case.
      *
@@ -360,7 +453,7 @@ public class HybridGraph<T extends Comparable<T>> {
             // remove the node, which has already been removed from the heap from the set of unprocessed nodes
             unprocessedNodes.remove(leastWeightNode.node.getKey());
             // get edge which connects the least weighted node to the MST
-            if(leastWeightNode.predecessor != null){
+            if (leastWeightNode.predecessor != null) {
                 // get adjacent nodes of predecessor...
                 var predAdjList = leastWeightNode.predecessor.getAdjList();
                 // and get the edge that connected the least weight node to the MST
@@ -376,7 +469,8 @@ public class HybridGraph<T extends Comparable<T>> {
 
     /**
      * Print (partial) result of Prim's minimal spanning tree algorithm.
-     * @param mst Edges of minimal spanning tree
+     *
+     * @param mst  Edges of minimal spanning tree
      * @param step step within the algorithm
      */
     private void printPrimSpanningTreeResultEdges(List<HybridEdge<T>> mst, int step) {
@@ -391,13 +485,13 @@ public class HybridGraph<T extends Comparable<T>> {
     }
 
 
-
     /**
      * Single-pair shortest path with Dijkstra's algorithm.
+     *
      * @param sourceKey key of start node
      * @return list of edges that
      */
-    public void dijkstra(T sourceKey){
+    public void dijkstra(T sourceKey) {
         int stepCounter = 0;
         var unprocessedNodes = new HashSet<T>(nodes.size());
         var allNodes = new HashMap<T, PrioNode<T>>();
@@ -406,7 +500,8 @@ public class HybridGraph<T extends Comparable<T>> {
             allNodes.put(it.getKey(), new PrioNode<T>(Double.POSITIVE_INFINITY, nodes.get(it.getKey()), null));
         });
         var startNode = nodes.get(sourceKey);
-        if(startNode == null) throw new IllegalArgumentException("Source node %s does not exist.\n".formatted(sourceKey));
+        if (startNode == null)
+            throw new IllegalArgumentException("Source node %s does not exist.\n".formatted(sourceKey));
 
         // set distance of start node to 0 and no predecessor
         allNodes.put(startNode.getKey(), new PrioNode<>(0d, nodes.get(startNode.getKey()), null));
@@ -416,15 +511,15 @@ public class HybridGraph<T extends Comparable<T>> {
 
 
         printDijkstraAlgorithmResult(prioQueue, allNodes, stepCounter);
-        while (!prioQueue.isEmpty()){
+        while (!prioQueue.isEmpty()) {
             stepCounter++;
             // get node with minimum distance (and remove that node from the priority queue)
             var minNodePrio = prioQueue.poll();
             var prioNode = allNodes.get(minNodePrio.node.getKey());
 
-            for (var edgeToAdjNode : minNodePrio.node.getAdjList().values()){
+            for (var edgeToAdjNode : minNodePrio.node.getAdjList().values()) {
                 var adjNode = allNodes.get(edgeToAdjNode.getTo());
-                if(unprocessedNodes.contains(adjNode.node.getKey()) && minNodePrio.distance + edgeToAdjNode.getWeight() < adjNode.distance){
+                if (unprocessedNodes.contains(adjNode.node.getKey()) && minNodePrio.distance + edgeToAdjNode.getWeight() < adjNode.distance) {
                     // a shorter path has been found (-> update distance and predecessor)
                     prioQueue.remove(adjNode);
                     var shorterPathLen = minNodePrio.distance + edgeToAdjNode.getWeight();
@@ -442,28 +537,29 @@ public class HybridGraph<T extends Comparable<T>> {
         }
     }
 
-    private void printDijkstraAlgorithmResult(PriorityQueue<PrioNode<T>> priorityQueue, HashMap<T, PrioNode<T>> allNodes, int step){
+    private void printDijkstraAlgorithmResult(PriorityQueue<PrioNode<T>> priorityQueue, HashMap<T, PrioNode<T>> allNodes, int step) {
         System.out.printf("\nStep %s\n", step);
         // Heap is not sorted! Smallest element is on top but that is it (here sort so that nodes are in sorted by their priority and lexicographically if the priority is the same)
         // This is just so that we conform to standards defined within the lecture
         System.out.printf("Heap: %s\n", priorityQueue.stream().sorted().toList());
 
         System.out.print("""
-        | Node  | Dist      | Pred  |
-        |-------|-----------|-------|
-        """);
+                | Node  | Dist      | Pred  |
+                |-------|-----------|-------|
+                """);
 
-        allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey(): "-" ));
+        allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey() : "-"));
     }
 
-    public void bellmannFord(T sourceNodeKey){
+    public void bellmannFord(T sourceNodeKey) {
         int stepCounter = 0;
         // set initial capacity to number of nodes so no resizing of hashmap needs to be done (load factor will be applied in constructor)
         var allNodes = new HashMap<T, PrioNode<T>>(nodes.size());
         nodes.values().forEach(it -> allNodes.put(it.getKey(), new PrioNode<>(Double.POSITIVE_INFINITY, it, null)));
 
         var startNode = nodes.get(sourceNodeKey);
-        if(startNode == null) throw new IllegalArgumentException("Source node %s does not exist.\n".formatted(sourceNodeKey));
+        if (startNode == null)
+            throw new IllegalArgumentException("Source node %s does not exist.\n".formatted(sourceNodeKey));
         // set distance of start node to 0 and no predecessor
         allNodes.put(startNode.getKey(), new PrioNode<>(0d, nodes.get(startNode.getKey()), null));
 
@@ -473,56 +569,56 @@ public class HybridGraph<T extends Comparable<T>> {
         // edges should be sorted by keys of the "from"-nodes in ascending order
         edges.sort(Comparator.comparing(HybridEdge::getFrom));
         System.out.print("""
-        Order in which edges are processed:
-        | Step  | From  | To    | Weight |
-        |-------|-------|-------|--------|
-        """);
+                Order in which edges are processed:
+                | Step  | From  | To    | Weight |
+                |-------|-------|-------|--------|
+                """);
         for (int i = 1; i <= edges.size(); i++) {
             var edge = edges.get(i - 1);
             System.out.printf("| %5d | %5s | %5s | %6s |\n", i, edge.getFrom(), edge.getTo(), edge.getWeight());
         }
 
         printBellmannFordResult(allNodes, stepCounter);
-        for(int i = 0; i < nodes.size() - 1; i++){
+        for (int i = 0; i < nodes.size() - 1; i++) {
             stepCounter++;
-            for (var edge: edges){
+            for (var edge : edges) {
                 var fromNode = allNodes.get(edge.getFrom());
                 var toNode = allNodes.get(edge.getTo());
-                if(toNode.distance > fromNode.distance + edge.getWeight()){
+                if (toNode.distance > fromNode.distance + edge.getWeight()) {
                     allNodes.put(edge.getTo(), new PrioNode<>(fromNode.distance + edge.getWeight(), toNode.node, fromNode.node));
                 }
             }
             printBellmannFordResult(allNodes, stepCounter);
         }
 
-        for (var edge: edges){
+        for (var edge : edges) {
             var fromNode = allNodes.get(edge.getFrom());
             var toNode = allNodes.get(edge.getTo());
-            if(toNode.distance > fromNode.distance + edge.getWeight()){
+            if (toNode.distance > fromNode.distance + edge.getWeight()) {
                 System.out.println("Negative cycle!");
                 return;
             }
         }
     }
 
-    private void printBellmannFordResult(HashMap<T, PrioNode<T>> allNodes, int step){
+    private void printBellmannFordResult(HashMap<T, PrioNode<T>> allNodes, int step) {
         System.out.printf("\nStep %s\n", step);
         System.out.print("""
-        | Node  | Dist      | Pred  |
-        |-------|-----------|-------|
-        """);
+                | Node  | Dist      | Pred  |
+                |-------|-----------|-------|
+                """);
 
-        allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey(): "-" ));
+        allNodes.forEach((key, value) -> System.out.printf("| %5s | %9s | %5s |\n", key, value.distance, value.predecessor != null ? value.predecessor.getKey() : "-"));
     }
 
     /**
      * Compute all-pairs-shortest-path (APSP) using Floyd-Warshall algorithm.
      * Runtime:
-     *  - BC/ AC/ WC: Θ(|V|³)
-     * @implNote As this graph is implemented as a graph with adjacency list, (a lot of) preprocessing needs to be done to generate the adjacency matrix (= distance matrix in iteration 0) required for the Floyd-Warshall algorithm.
+     * - BC/ AC/ WC: Θ(|V|³)
      *
+     * @implNote As this graph is implemented as a graph with adjacency list, (a lot of) preprocessing needs to be done to generate the adjacency matrix (= distance matrix in iteration 0) required for the Floyd-Warshall algorithm.
      */
-    public void floydWarshallAlgorithm(){
+    public void floydWarshallAlgorithm() {
         int stepCounter = 0;
         var predecessorMatrix = new String[nodes.size()][nodes.size()];
         var prevDistanceMatrix = new double[nodes.size()][nodes.size()];
@@ -532,11 +628,10 @@ public class HybridGraph<T extends Comparable<T>> {
 
         for (int i = 0; i < prevDistanceMatrix.length; i++) {
             for (int j = 0; j < prevDistanceMatrix.length; j++) {
-                if(i == j) {
+                if (i == j) {
                     prevDistanceMatrix[i][j] = 0d;
                     curDistanceMatrix[i][j] = 0d;
-                }
-                else {
+                } else {
                     prevDistanceMatrix[i][j] = Double.POSITIVE_INFINITY;
                     curDistanceMatrix[i][j] = Double.POSITIVE_INFINITY;
                 }
@@ -544,15 +639,15 @@ public class HybridGraph<T extends Comparable<T>> {
         }
 
         int i = 0;
-        for(var key: nodes.keySet()){
+        for (var key : nodes.keySet()) {
             mapKeysToArrayIdx.put(key, i);
             mapReverse.put(i, key);
             i++;
         }
 
         int j = 0;
-        for (var node: nodes.values()){
-            for (var ajdNodeEdge: node.getAdjList().values()) {
+        for (var node : nodes.values()) {
+            for (var ajdNodeEdge : node.getAdjList().values()) {
                 var nodeToIdx = mapKeysToArrayIdx.get(ajdNodeEdge.getTo());
                 predecessorMatrix[j][nodeToIdx] = ajdNodeEdge.getFrom().toString();
                 //setGenericMultidimMatrix(predecessorMatrix, j, nodeToIdx, ajdNodeEdge.getFrom());
@@ -581,14 +676,15 @@ public class HybridGraph<T extends Comparable<T>> {
                     // possible new path consists of: shortest path from node y to new "in between node k" + shortest from new "in between node k" to node x
                     var newShortestPath = prevDistanceMatrix[y][k] + prevDistanceMatrix[k][x];
                     // check whether the new path is shorter than the already existing one
-                    if(newShortestPath < curShortestPath){
+                    if (newShortestPath < curShortestPath) {
                         // update path length
                         curDistanceMatrix[y][x] = newShortestPath;
                         // update predecessor: new predecessor is now the predecessor of the shortest path from the "in between node k" to target node x
                         // Note: be aware that new "in between node k" is not necessarily the immediate predecessor for path, though in small graphs with just a few nodes this may often be the case!
                         predecessorMatrix[y][x] = predecessorMatrix[k][x];
 
-                    } else curDistanceMatrix[y][x] = curShortestPath; // copy previous shortest path and predecessor over to new distance matrix
+                    } else
+                        curDistanceMatrix[y][x] = curShortestPath; // copy previous shortest path and predecessor over to new distance matrix
                 }
             }
             printFloydWarshallResult(curDistanceMatrix, predecessorMatrix, mapReverse, stepCounter);
@@ -596,13 +692,13 @@ public class HybridGraph<T extends Comparable<T>> {
         }
     }
 
-    private void setGenericMultidimMatrix(List<List<T>> m, int i, int j, T value){
+    private void setGenericMultidimMatrix(List<List<T>> m, int i, int j, T value) {
         var curList = m.get(j);
         curList.set(i, value);
         m.set(j, curList);
     }
 
-    private void printFloydWarshallResult(double[][] distMatrix, String[][] predecessorMatrix, Map<Integer, T> mapIndexToKey, int step){
+    private void printFloydWarshallResult(double[][] distMatrix, String[][] predecessorMatrix, Map<Integer, T> mapIndexToKey, int step) {
         System.out.printf("\n\n> Step: %d\n\tDistance matrix:\n\t %4s |", step, "");
         for (int i = 0; i < distMatrix.length; i++) System.out.printf(" %8s ", mapIndexToKey.get(i));
         System.out.println("\n\t" + "-".repeat(6) + "|" + "-".repeat(distMatrix.length * 10));
