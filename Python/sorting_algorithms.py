@@ -3,10 +3,10 @@ from timeit import default_timer
 
 
 def init():
-    arrayToSortLecture = [34, 45, 12, 34, 23, 18, 38, 17, 43, 7]
-    randArray = fill_array_rand(10, -100, 100)
+    array_to_sort_lecture = [34, 45, 12, 34, 23, 18, 38, 17, 43, 7]
+    rand_array = fill_array_rand(10, -100, 100)
     test_arr = [21, -6, -46, -14, 9, 43, -18, 9, 21, 20]
-    arrayToSort = randArray
+    arrayToSort = array_to_sort_lecture
 
     print(f"""
     +-------------------------------------------+

@@ -3,7 +3,7 @@ package graphs.graph_adj_list_hybrid;
 public class GraphExerciseCreator {
     public static void main(String[] args) {
         // Create one of many provided graphs
-        var exercise = createLectureFloydWarshallGraph();
+        var exercise = createWikipediaFloydWarshallGraph();
 
         System.out.println("""
                 
@@ -237,6 +237,17 @@ public class GraphExerciseCreator {
         graph.addEdge(4, 1, 2d, true);
         graph.addEdge(4, 3, -5d, true);
         graph.addEdge(5, 4, 6d, true);
+        return graph;
+    }
+
+    public static HybridGraph<Integer> createWikipediaFloydWarshallGraph(){
+        var graph = new HybridGraph<Integer>();
+        for (int i = 1; i <= 4; i++) graph.addNode(i);
+        graph.addEdge(1, 3, -2d, true);
+        graph.addEdge(2, 1, 4d, true);
+        graph.addEdge(2, 3, 3d, true);
+        graph.addEdge(3, 4, 2d, true);
+        graph.addEdge(4, 2, -1d, true);
         return graph;
     }
 }

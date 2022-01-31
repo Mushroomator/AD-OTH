@@ -2,8 +2,8 @@ import sys
 
 
 def init():
-    search_str = "sgtring" # "EIN MUSTER P WIRD IN EINEM GEGEBENEN TEXT GESUCHT"
-    pattern = "gstring" # "KEIN"
+    search_str = "algorithmen und datenstrukturen" #"sgtring" # "EIN MUSTER P WIRD IN EINEM GEGEBENEN TEXT GESUCHT"
+    pattern = "daten" #"gstring" # "KEIN"
 
     print(f"""
 +-------------------------------

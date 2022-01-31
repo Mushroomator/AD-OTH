@@ -37,7 +37,7 @@ public class HybridGraph<T extends Comparable<T>> {
             nodes.put(key, newNode);
             return Optional.of(newNode);
         }
-        System.out.printf("Node %s already exists!", key.toString());
+        System.out.printf("AvlNode %s already exists!", key.toString());
         return Optional.empty();
     }
 
@@ -262,7 +262,7 @@ public class HybridGraph<T extends Comparable<T>> {
         for (var adj : curNode.node.getAdjList().values()) {
             var adjNode = allNodes.get(adj.getTo());
             if (adjNode.color == NodeColor.WHITE) {
-                // Node has not yet been visited
+                // AvlNode has not yet been visited
                 // --> store this node as its predecessor
                 // --> "Go deep": visit this node
                 adjNode.predecessor = curNode.node.getKey();
@@ -358,7 +358,7 @@ public class HybridGraph<T extends Comparable<T>> {
         System.out.printf("\nStep: %s\n", step);
         printKruskalSpanningTreeResultEdges(sortedEdges, step);
         System.out.println("\nUnion-Find data structure:");
-        System.out.println("| Node  | Repr  |");
+        System.out.println("| AvlNode  | Repr  |");
         System.out.println("|-------|-------|");
         uf.getSets().forEach((nodeKey, node) -> System.out.printf("| %5s | %5s |\n", nodeKey, node.getRep().key));
         System.out.println("\nMinimal Spanning Tree:");
@@ -544,7 +544,7 @@ public class HybridGraph<T extends Comparable<T>> {
         System.out.printf("Heap: %s\n", priorityQueue.stream().sorted().toList());
 
         System.out.print("""
-                | Node  | Dist      | Pred  |
+                | AvlNode  | Dist      | Pred  |
                 |-------|-----------|-------|
                 """);
 
@@ -604,7 +604,7 @@ public class HybridGraph<T extends Comparable<T>> {
     private void printBellmannFordResult(HashMap<T, PrioNode<T>> allNodes, int step) {
         System.out.printf("\nStep %s\n", step);
         System.out.print("""
-                | Node  | Dist      | Pred  |
+                | AvlNode  | Dist      | Pred  |
                 |-------|-----------|-------|
                 """);
 

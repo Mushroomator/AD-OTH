@@ -9,23 +9,40 @@ All graphs can be visualized using [CS Academy Graph Visualizer](https://csacade
   - [Undirected graphs](#undirected-graphs)
     - [createBreadthFirstSearchLectureSampleGraph()](#createbreadthfirstsearchlecturesamplegraph)
       - [Description](#description)
-      - [Node Count:](#node-count)
+      - [AvlNode Count:](#avlnode-count)
       - [Graph Data:](#graph-data)
     - [createLectureSample02Graph()](#createlecturesample02graph)
       - [Description](#description-1)
-      - [Node Count:](#node-count-1)
+      - [AvlNode Count:](#avlnode-count-1)
       - [Graph Data:](#graph-data-1)
     - [createSampleGraph01()](#createsamplegraph01)
-      - [Node Count:](#node-count-2)
+      - [AvlNode Count:](#avlnode-count-2)
       - [Graph Data:](#graph-data-2)
     - [createBreadthFirstSearchLectureSampleGraph()](#createbreadthfirstsearchlecturesamplegraph-1)
       - [Description](#description-2)
-      - [Node Count:](#node-count-3)
+      - [AvlNode Count:](#avlnode-count-3)
       - [Graph Data:](#graph-data-3)
-  - [Directed graphs](#directed-graphs)
+    - [createExamPrimGraph()](#createexamprimgraph)
       - [Description](#description-3)
-      - [Node Count:](#node-count-4)
+      - [AvlNode Count:](#avlnode-count-4)
       - [Graph Data:](#graph-data-4)
+  - [Directed graphs](#directed-graphs)
+    - [createLectureTopologicalOrderSampleGraph()](#createlecturetopologicalordersamplegraph)
+      - [Description](#description-4)
+      - [AvlNode Count:](#avlnode-count-5)
+      - [Graph Data:](#graph-data-5)
+    - [createLectureDijkstraAlgorithmGraph()](#createlecturedijkstraalgorithmgraph)
+      - [Description](#description-5)
+      - [AvlNode Count:](#avlnode-count-6)
+      - [Graph Data:](#graph-data-6)
+    - [createLectureBellmannFordGraph()](#createlecturebellmannfordgraph)
+      - [Description](#description-6)
+      - [AvlNode Count:](#avlnode-count-7)
+      - [Graph Data:](#graph-data-7)
+    - [createLectureFloydWarshallGraph()](#createlecturefloydwarshallgraph)
+      - [Description](#description-7)
+      - [AvlNode Count:](#avlnode-count-8)
+      - [Graph Data:](#graph-data-8)
 
 ## Graph Attributes
 Each graph has different attributes which can be seen looking at the graph but are also shown as a badge for each graph here. Have a look at the following table to see all badges and their meaning.
@@ -57,7 +74,7 @@ Each graph has different attributes which can be seen looking at the graph but a
 ![](graph_images/Lecture_BreadthFirstSearch_Sample.png)
 #### Description
 Graph as shown in lecture 19 on page 4 for BFS and 13 for DFS.
-#### Node Count:
+#### AvlNode Count:
 ```
 8
 ```
@@ -83,7 +100,7 @@ Graph as shown in lecture 19 on page 4 for BFS and 13 for DFS.
 ![](graph_images/Lecture_BFS_DFS_Sample02.png)
 #### Description
 Graph as shown in lecture 19 on page 22.
-#### Node Count:
+#### AvlNode Count:
 ```
 9
 ```
@@ -107,7 +124,7 @@ Graph as shown in lecture 19 on page 22.
 
 ![](graph_images/graph01.png)
 
-#### Node Count:
+#### AvlNode Count:
 ```
 6
 ```
@@ -131,7 +148,7 @@ Graph as shown in lecture 19 on page 22.
 ![](graph_images/Lecture_MST_Sample.png)
 #### Description
 Graph as shown in lecture 20 on page 13 for Kruskal's algorithm and page 24 for Prim's algorithm.
-#### Node Count:
+#### AvlNode Count:
 ```
 9
 ```
@@ -160,7 +177,7 @@ Graph as shown in lecture 20 on page 13 for Kruskal's algorithm and page 24 for 
 ![](graph_images/Exam_SimilarPrimGraph.png)
 #### Description
 Graph similar to the graph in the exam for the summer term 2021 for the application of Prim's algorithms.
-#### Node Count:
+#### AvlNode Count:
 ```
 21
 ```
@@ -203,6 +220,27 @@ Graph similar to the graph in the exam for the summer term 2021 for the applicat
 19 20 6
 ```
 
+### createWikipediaFloydWarshall()
+[![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/Wikipedia_FloydWarshallAlgorithm.png)
+#### Description
+Simple graph from [Wikipedia](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm) used to show how Floyd-Warshall algorithm works.
+#### AvlNode Count:
+```
+4
+```
+#### Graph Data:
+```
+1 3 -2
+2 1 4
+2 3 3
+3 4 2
+4 2 -1
+```
+
 
 
 ## Directed graphs
@@ -214,7 +252,7 @@ Graph similar to the graph in the exam for the summer term 2021 for the applicat
 ![](graph_images/Lecture_Topological_Order_Sample.png)
 #### Description
 Graph as shown in lecture 21 on page 11.
-#### Node Count:
+#### AvlNode Count:
 ```
 9
 ```
@@ -240,7 +278,7 @@ Graph as shown in lecture 21 on page 11.
 ![](graph_images/Lecture_DijkstraAlgorithm.png)
 #### Description
 Graph as shown in lecture 19 on page 26.
-#### Node Count:
+#### AvlNode Count:
 ```
 5
 ```
@@ -269,7 +307,7 @@ Graph as shown in lecture 19 on page 26.
 ![](graph_images/Lecture_BellmannFord.png)
 #### Description
 Graph as shown in lecture 21 on page 21.
-#### Node Count:
+#### AvlNode Count:
 ```
 5
 ```
@@ -298,7 +336,7 @@ Graph as shown in lecture 21 on page 21.
 ![](graph_images/Lecture_FloydWarshall_Sample.png)
 #### Description
 Graph as shown in lecture 22 on page 22.
-#### Node Count:
+#### AvlNode Count:
 ```
 5
 ```

@@ -13,6 +13,6 @@ public class Exercise03 {
         };
 
         var addResult = matrix.add(test);
-        var mulResult = matrix.multiply(test);
+        var mulResult = matrix.multiply(test, true);
     }
 }

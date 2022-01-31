@@ -4,8 +4,8 @@ import java.util.HashSet;
 public class StringMatcher {
 
     public static void main(String[] args){
-        String searchStr = "kein ende in sicht";
-        String pattern = "ende";
+        String searchStr = "algorithmen und datenstrukturen";
+        String pattern = "daten";
 
         System.out.println("""
                 +-------------------------------
@@ -146,12 +146,12 @@ public class StringMatcher {
                 // get shift value from shift table
                 int shiftVal = shift[getIndex(text[i])];
                 // in case a character has a very small shift value and
-                // the mismatched occurred very late (almost at beginning of pattern)
+                // the mismatch occurred very late (almost at beginning of pattern)
                 // shift by the number of already compared values to get the biggest possible shift
                 // e.g. pattern="gstring" text="sgtring"
-                // comparison would show that "string" is in there and the mismatch would occur when "g" and "n" are compared
-                // "g" has shift value of 0 so no shift would be applied but, same comparison would be carried out again -> again shift of 0 -> infinite loop
-                // as the previous 6 characters have matched we can certainly shift by 5 for the next comparison
+                // comparison would show that "string" is in there and the mismatch would occur when "g" and "s" are compared
+                // "g" has shift value of 0 so no shift would be applied -> same comparison would be carried out again -> again shift of 0 -> infinite loop
+                // But as the previous 6 characters have matched we can certainly shift by 5 for the next comparison
                 if(pattern.length - j > shiftVal){
                     i = i + pattern.length - j;
                 } else {

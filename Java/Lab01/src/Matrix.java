@@ -145,15 +145,17 @@ public class Matrix {
         return result;
     }
 
-    public int[][] multiply(int[][] matrix){
+    public int[][] multiply(int[][] matrix, boolean print){
         if(this.m == null) throw new IllegalArgumentException("Please init matrix first by calling init()");
         if(matrix.length != m.length) throw new IllegalArgumentException(String.format("Matrix must have dimensions %dx%d", this.m.length, this.m.length));
 
         var result = new int[m.length][m.length];
-        System.out.println("Multiplying two matrices:");
-        print(m);
-        System.out.println(" ".repeat((m.length * 5) >> 1) + "+");
-        print(matrix);
+        if(print){
+            System.out.println("Multiplying two matrices:");
+            print(m);
+            System.out.println(" ".repeat((m.length * 5) >> 1) + "+");
+            print(matrix);
+        }
 
         for(int i = 0; i < m.length; i++){
             if(matrix[i].length != m.length) throw new IllegalArgumentException(String.format("Matrix must have be quadratic! E.g.: %dx%d", this.m.length, this.m.length));
@@ -165,8 +167,14 @@ public class Matrix {
                 result[i][j] = sum;
             }
         }
-        System.out.println("Result:");
-        print(result);
+        if(print){
+            System.out.println("Result:");
+            print(result);
+        }
         return result;
+    }
+
+    public int[][] getM() {
+        return m;
     }
 }

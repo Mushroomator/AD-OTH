@@ -1,14 +1,14 @@
 import java.util.Objects;
 
-public class Node {
+public class AvlNode {
 
     private int height;
-    private Node left;
-    private Node right;
+    private AvlNode left;
+    private AvlNode right;
     private int key;
     private Object anyData;
 
-    public Node(int key) {
+    public AvlNode(int key) {
         this.key = key;
     }
 
@@ -20,19 +20,19 @@ public class Node {
         this.height = height;
     }
 
-    public Node getLeft() {
+    public AvlNode getLeft() {
         return left;
     }
 
-    public void setLeft(Node left) {
+    public void setLeft(AvlNode left) {
         this.left = left;
     }
 
-    public Node getRight() {
+    public AvlNode getRight() {
         return right;
     }
 
-    public void setRight(Node right) {
+    public void setRight(AvlNode right) {
         this.right = right;
     }
 
@@ -56,7 +56,7 @@ public class Node {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Node node = (Node) o;
+        AvlNode node = (AvlNode) o;
         return height == node.height && key == node.key && Objects.equals(left, node.left) && Objects.equals(right, node.right) && Objects.equals(anyData, node.anyData);
     }
 
