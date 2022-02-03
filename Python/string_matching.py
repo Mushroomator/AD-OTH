@@ -2,8 +2,15 @@ import sys
 
 
 def init():
-    search_str = "algorithmen und datenstrukturen" #"sgtring" # "EIN MUSTER P WIRD IN EINEM GEGEBENEN TEXT GESUCHT"
-    pattern = "daten" #"gstring" # "KEIN"
+
+    ss2018_search_str = "363645636363645632136";
+    ss2018_search_pattern = "3636";
+    exercise_str = "algorithmen und datenstrukturen";
+    exercise_pattern = "daten";
+    special_case_trigger_str = "sgtring - now some irrelevant text to show how special case shifts"
+    special_case_trigger_pattern = "gstring"
+    search_str = special_case_trigger_str
+    pattern = special_case_trigger_pattern
 
     print(f"""
 +-------------------------------
@@ -103,6 +110,7 @@ def boyer_moore_search(text, pattern):
                 # number of already compared characters before mismatch is greater than shift value
                 # e.g. with text="sgtring" and pattern="gstring"
                 t_idx += pattern_length - p_idx
+                print(f"Special case triggered: shift value would be {shift_value} but already {pattern_length - p_idx} chars compared! Shift by 6!")
             else:
                 # shift by shift value for given character
                 t_idx += shift_value

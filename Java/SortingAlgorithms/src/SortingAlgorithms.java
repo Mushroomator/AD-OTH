@@ -462,7 +462,7 @@ public class SortingAlgorithms {
         int startLeft = first, endLeft = middle, startRight = middle + 1, endRight = last;
         int intervalLength = last - first + 1;
 
-        // Fill each positon of the array with the appropiate value from either the right side or the left side
+        // Fill each positon of the array with the appropriate value from either the right side or the left side
         for (int i = 0; i < intervalLength; i++) {
             // position in array that has to be filled
             int currentPosition = first + i;
@@ -860,7 +860,7 @@ public class SortingAlgorithms {
     }
 
     /**
-     * Binary serach for an element in a !!!sorted!!! array. Recursive implementation.
+     * Binary serach for an element in a <em>sorted</em> array. Recursive implementation.
      * Returns index of element in array if present or -1 otherwise.
      *
      * @param array     sorted array which should be searched

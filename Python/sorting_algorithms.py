@@ -44,6 +44,13 @@ def init():
     qs_end = default_timer()
     print_result("Quick sort", qs_end - qs_start, qs_arr)
 
+    # Merge sort
+    ms_arr = arrayToSort.copy()
+    ms_start = default_timer()
+    merge_sort(ms_arr, 0, len(qs_arr) - 1)
+    ms_end = default_timer()
+    print_result("Merge sort", ms_end - ms_start, ms_arr)
+
 
 def fill_array_rand(size, randStart, randEnd):
     """
@@ -192,6 +199,41 @@ def prepare_partition(array, first, last):
 
     # return index of pivot element (left from it --> everything is lower, right from it -> everything is greater)
     return part
+
+
+def merge_sort(array, first, last):
+    if first < last:
+        middle = first + ((last - first) >> 1)
+        merge_sort(array, first, middle)
+        merge_sort(array, middle + 1, last)
+        merge(array, first, last, middle)
+    return array
+
+def merge(array, first, last, middle):
+    startLeft, endLeft, startRight, endRight = first, middle, middle + 1, last
+    ival_len = last - first + 1
+    insert_arr = [0] * ival_len
+
+    for i in range(ival_len):
+        if startLeft <= endLeft:
+            if startRight <= endRight:
+                if array[startLeft] <= array[startRight]:
+                    insert_arr[i] = array[startLeft]
+                    startLeft += 1
+                else:
+                    insert_arr[i] = array[startRight]
+                    startRight += 1
+            else:
+                insert_arr[i] = array[startLeft]
+                startLeft += 1
+        else:
+            insert_arr[i] = array[startRight]
+            startRight += 1
+
+    for i in range(ival_len):
+        array[first + i] = insert_arr[i]
+
+    return array
 
 if __name__ == '__main__':
     init()

@@ -220,6 +220,77 @@ Graph similar to the graph in the exam for the summer term 2021 for the applicat
 19 20 6
 ```
 
+### createSS2018KruskalDijkstraGraph()
+[![Is a directed graph?](https://img.shields.io/badge/directed-no-red.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/SS2018_KruskalDijkstraGraph.png)
+#### Description
+Graph as used in summer term exam of 2018 for Kruskal and Dijkstra's algorithm.
+#### AvlNode Count:
+```
+8
+```
+#### Graph Data:
+```
+1 2 28
+1 3 24
+1 4 26
+1 6 3
+2 3 2
+2 8 1
+3 4 6
+4 5 4
+5 6 5
+6 7 23
+6 8 22
+7 8 7
+```
+
+### createSS2017PrimGraph()
+[![Is a directed graph?](https://img.shields.io/badge/directed-no-red.svg)](https://shields.io/)
+[![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
+[![Suitable for algorithms](https://img.shields.io/badge/Suitable%20for-BFS%2C%20DFS%2C%20MST-ffffff.svg)](https://GitHub.com/Naereen/ama)
+
+![](graph_images/SS2017_PrimGraph.png)
+#### Description
+Graph as used in summer term exam of 2018 for Kruskal and Dijkstra's algorithm.
+#### AvlNode Count:
+```
+17
+```
+#### Graph Data:
+```
+0 13 3
+0 15 11
+1 13 2
+1 2 4
+2 3 5
+3 13 21
+3 4 13
+3 8 20
+4 5 14
+5 8 6
+5 6 22
+6 7 19
+7 8 12
+8 9 25
+8 14 18
+9 10 23
+9 12 15
+10 11 17
+11 12 5
+11 16 16
+12 14 10
+12 15 7
+13 14 8
+15 16 1
+```
+
+
+
+## Directed graphs
 ### createWikipediaFloydWarshall()
 [![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-yes-green.svg)](https://shields.io/)
@@ -241,9 +312,6 @@ Simple graph from [Wikipedia](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warsha
 4 2 -1
 ```
 
-
-
-## Directed graphs
 ### createLectureTopologicalOrderSampleGraph()
 [![Is a directed graph?](https://img.shields.io/badge/directed-yes-green.svg)](https://shields.io/)
 [![Is a weighted graph?](https://img.shields.io/badge/weighted-no-red.svg)](https://shields.io/)
@@ -352,3 +420,4 @@ Graph as shown in lecture 22 on page 22.
 4 3 -5
 5 4 6
 ```
+

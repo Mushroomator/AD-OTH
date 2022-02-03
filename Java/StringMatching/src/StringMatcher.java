@@ -1,11 +1,19 @@
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * @implNote Only works for lower case letters. Python implementation can handle Unicode and prints out each and every step nicely, so you may want to choose that.
+ */
 public class StringMatcher {
 
     public static void main(String[] args){
-        String searchStr = "algorithmen und datenstrukturen";
-        String pattern = "daten";
+
+        String ss2018SearchStr = "363645636363645632136";
+        String ss2018SearchPattern = "3636";
+        String exerciseStr = "algorithmen und datenstrukturen";
+        String exercisePattern = "daten";
+        String searchStr = ss2018SearchStr;
+        String pattern = ss2018SearchPattern;
 
         System.out.println("""
                 +-------------------------------

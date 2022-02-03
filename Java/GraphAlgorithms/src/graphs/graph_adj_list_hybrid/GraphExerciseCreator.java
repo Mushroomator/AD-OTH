@@ -3,7 +3,7 @@ package graphs.graph_adj_list_hybrid;
 public class GraphExerciseCreator {
     public static void main(String[] args) {
         // Create one of many provided graphs
-        var exercise = createWikipediaFloydWarshallGraph();
+        var exercise = createSS2017PrimGraph();
 
         System.out.println("""
                 
@@ -53,7 +53,7 @@ public class GraphExerciseCreator {
                 | Dijkstra's algorithm                   |
                 +----------------------------------------+
                 """);
-        //exercise.dijkstra(0);
+        exercise.dijkstra(0);
 
         System.out.println("""
                 
@@ -61,7 +61,7 @@ public class GraphExerciseCreator {
                 | Bellmann-Ford algorithm                |
                 +----------------------------------------+
                 """);
-        //exercise.bellmannFord(0);
+        exercise.bellmannFord(0);
 
         System.out.println("""
                 
@@ -250,4 +250,54 @@ public class GraphExerciseCreator {
         graph.addEdge(4, 2, -1d, true);
         return graph;
     }
+
+    public static HybridGraph<Integer> createSS2018KruskalDijkstraGraph(){
+        var graph = new HybridGraph<Integer>();
+        for (int i = 1; i <= 8; i++) graph.addNode(i);
+        graph.addEdge(1, 2, 28d, false);
+        graph.addEdge(1, 3, 24d, false);
+        graph.addEdge(1, 4, 26d, false);
+        graph.addEdge(1, 6, 3d, false);
+        graph.addEdge(2, 3, 2d, false);
+        graph.addEdge(2, 8, 1d, false);
+        graph.addEdge(3, 4, 6d, false);
+        graph.addEdge(4, 5, 4d, false);
+        graph.addEdge(5, 6, 5d, false);
+        graph.addEdge(6, 7, 23d, false);
+        graph.addEdge(6, 8, 22d, false);
+        graph.addEdge(7, 8, 7d, false);
+        return graph;
+    }
+
+    public static HybridGraph<Integer> createSS2017PrimGraph(){
+        var graph = new HybridGraph<Integer>();
+        for (int i = 0; i <= 16; i++) graph.addNode(i);
+        graph.addEdge(0, 13, 3d, false);
+        graph.addEdge(0, 15, 11d, false);
+        graph.addEdge(1, 13, 2d, false);
+        graph.addEdge(1, 2, 4d, false);
+        graph.addEdge(2, 3, 5d, false);
+        graph.addEdge(3, 13, 21d, false);
+        graph.addEdge(3, 4, 13d, false);
+        graph.addEdge(3, 8, 20d, false);
+        graph.addEdge(4, 5, 14d, false);
+        graph.addEdge(5, 8, 6d, false);
+        graph.addEdge(5, 6, 22d, false);
+        graph.addEdge(6, 7, 19d, false);
+        graph.addEdge(7, 8, 12d, false);
+        graph.addEdge(8, 9, 25d, false);
+        graph.addEdge(8, 14, 18d, false);
+        graph.addEdge(9, 10, 23d, false);
+        graph.addEdge(9, 12, 15d, false);
+        graph.addEdge(10, 11, 17d, false);
+        graph.addEdge(11, 12, 5d, false);
+        graph.addEdge(11, 16, 16d, false);
+        graph.addEdge(12, 14, 10d, false);
+        graph.addEdge(12, 15, 7d, false);
+        graph.addEdge(13, 14, 8d, false);
+        graph.addEdge(15, 16, 1d, false);
+        return graph;
+    }
 }
+
+
