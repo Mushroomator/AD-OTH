@@ -9,10 +9,10 @@ public class SortingAlgorithms {
     public static void main(String[] args) {
         int[] arrayToSortLecture = {34, 45, 12, 34, 23, 18, 38, 17, 43, 7};
         int[] test = new int[]{21, -6, -46, -14, 9, 43, -18, 9, 21, 20};
-        int[] randArray = fillArrayRand(10, -50, 50);
+        int[] randArray = fillArrayRand(7, -20, 20);
 
         // working array
-        int[] curArray = arrayToSortLecture;
+        int[] curArray = randArray;
 
         System.out.printf("""
                 +-------------------------------------------+

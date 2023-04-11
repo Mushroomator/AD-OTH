@@ -3,7 +3,7 @@ package graphs.graph_adj_list_hybrid;
 public class GraphExerciseCreator {
     public static void main(String[] args) {
         // Create one of many provided graphs
-        var exercise = createSS2017PrimGraph();
+        var exercise = createSS2018KruskalDijkstraGraph();
 
         System.out.println("""
                 
@@ -53,7 +53,7 @@ public class GraphExerciseCreator {
                 | Dijkstra's algorithm                   |
                 +----------------------------------------+
                 """);
-        exercise.dijkstra(0);
+        exercise.dijkstra(1);
 
         System.out.println("""
                 
@@ -61,7 +61,7 @@ public class GraphExerciseCreator {
                 | Bellmann-Ford algorithm                |
                 +----------------------------------------+
                 """);
-        exercise.bellmannFord(0);
+        exercise.bellmannFord(1);
 
         System.out.println("""
                 

@@ -1,4 +1,4 @@
-import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Stack;
 
 /**
@@ -11,6 +11,10 @@ public class BinarySearchTree {
 
     public BinarySearchTree(){
         this.root = null;
+    }
+
+    public Node getRoot() {
+        return root;
     }
 
     /**
@@ -379,6 +383,64 @@ public class BinarySearchTree {
             current = current.getLeft();
         }
         return node;
+    }
+
+    /**
+     * Finds the n-th largest key in a given subtree.
+     * @param root root node to start from
+     * @param n n-th largest key to get, n =< 1 will result in the largest key being returned
+     * @return returns n-th larges value, if n <= 1 return largest value
+     */
+    public Node findNthLargestKey(Node root, int n){
+        if(root == null) return null;
+        if(n < 1) n = 1;
+        // early out: if you know how many nodes you have in the tree return if n is bigger than that
+        // based on number of nodes compared to n some assumptions could be made to speed up algorithm
+        // e.g. n == number of nodes -> get to left-most node and return it
+        // if n is close to number of nodes also probably start in left branch instead of all the way on the right side at the biggest node
+        var stack = new Stack<Node>();
+        // remember nodes that have been visited and have been counted against n
+        var done = new HashSet<Integer>();
+        // start at root node
+        var current = root;
+        stack.add(root);
+        // continue as long as the stack is not empty, if it is n was to big and the n-th largest value could not be found
+        while (!stack.empty()){
+            // pop next value from the stack (will be root in first iteration)
+            current = stack.pop();
+            // always try to go as far to the right as possible to get the biggest value that has not yet been counted against n
+            while (current != null && !done.contains(current.getKey())){
+                stack.add(current);
+                current = current.getRight();
+            }
+            // if we are here we've found the biggest value that has not yet been counted against n
+            var prev = stack.pop();
+            // if we have found the nth biggest value return
+            if(--n == 0){
+                return prev;
+            }
+            // otherwise mark this node as done and counted against n
+            done.add(prev.getKey());
+            // if node has a left successor, visit it first as this node has no right successors that have not been counted against n already
+            if(prev.getLeft() != null) stack.add(prev.getLeft());
+        }
+        // n-th largest value was not found (n was to big)
+        return null;
+    }
+
+    public boolean contains(int key){
+        return find(key) != null;
+    }
+
+    public Node find(int key){
+        var current = root;
+        while (current != null){
+            if(current.getKey() == key) return current;
+            else if (key < current.getKey()) current = current.getLeft();
+            else current = current.getRight();
+        }
+        // not found
+        return null;
     }
 
     /**

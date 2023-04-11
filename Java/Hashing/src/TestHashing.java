@@ -3,7 +3,7 @@ import java.util.Arrays;
 public class TestHashing {
 
     public static void main(String[] args) {
-        runHashingLecture16Page6();
+        runHashingLab07Ex02IW();
     }
 
     public static void runHashingLecture16Page6() {
@@ -76,9 +76,9 @@ public class TestHashing {
 
     public static void runHashingLab07Ex02IW(){
         var m = 11;
-        var linear = new HashtableLinearProbing(m, key -> key % 11);
-        var quadratic = new HashtableQuadraticProbing(m, key -> key % 11, 1, 3);
-        var doubleHashing = new HashtableDoubleHashing(m, key -> key % 11, key -> 1 + (key % (m - 1)));
+        var linear = new HashtableLinearProbing(m, key -> key);
+        var quadratic = new HashtableQuadraticProbing(m, key -> key, 1, 3);
+        var doubleHashing = new HashtableDoubleHashing(m, key -> key, key -> 1 + (key % (m-1)));
 
         var inputs = new int[]{ 10, 22, 31, 4, 15, 28, 17, 88, 59 };
         for (var input : inputs) {
